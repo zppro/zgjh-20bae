@@ -10,6 +10,6 @@
 
 #define DirectorySideBarWidth 230
 
-@interface DirectorySideBarController : UIViewController<RNGridMenuDelegate>
+@interface DirectorySideBarController : UIViewController
 
 @end

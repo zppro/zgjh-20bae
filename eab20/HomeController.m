@@ -12,7 +12,7 @@
 #import "ContactActionController.h"
 #import "JSBadgeView.h"
 
-#define kNumContactsPerLoad 24
+#define kNumContactsPerLoad 20
 #define kViewBackgroundColor [UIColor colorWithRed:0.357 green:0.757 blue:0.357 alpha:1]
 #define kSquareSideLength 64.0f
 #define kSquareCornerRadius 10.0f
@@ -54,12 +54,12 @@
 }
 
 - (void) createContactIn:(UIView *)parentView{
-    self.view.backgroundColor = kViewBackgroundColor;
+    //self.view.backgroundColor = kViewBackgroundColor;
     
-    UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:self.view.bounds];
+    //UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:self.view.bounds];
     //scrollView.alwaysBounceHorizontal = YES;
-    [parentView addSubview:scrollView];
-    [scrollView release];
+    //[parentView addSubview:scrollView];
+    //[scrollView release];
     
     CGFloat viewWidth = self.view.frame.size.width;
     
@@ -73,19 +73,20 @@
     CGRect rectangleBounds = CGRectMake(0.0f,
                                         0.0f,
                                         kSquareSideLength,
-                                        kSquareSideLength);
+                                        kSquareSideLength+16);
     
     
-    CGPathRef rectangleShadowPath = [UIBezierPath bezierPathWithRoundedRect:rectangleBounds byRoundingCorners:UIRectCornerAllCorners cornerRadii:CGSizeMake(kSquareCornerRadius, kSquareCornerRadius)].CGPath;
+    CGPathRef rectangleShadowPath = [UIBezierPath bezierPathWithRoundedRect:rectangleBounds byRoundingCorners:UIRectCornerAllCorners cornerRadii:CGSizeMake(kSquareCornerRadius, kSquareCornerRadius+16)].CGPath;
      
     
     
     for (int i = 0; i < kNumContactsPerLoad; i++)
     {
-        UIView *contactSquare = [[UIView alloc] initWithFrame:CGRectIntegral(CGRectMake(xOffset,
+        
+        UIButton *contactSquare = [[UIButton alloc] initWithFrame:CGRectIntegral(CGRectMake(xOffset,
                                                                                     yOffset,
                                                                                     rectangleBounds.size.width,
-                                                                                    rectangleBounds.size.height))];
+                                                                                            rectangleBounds.size.height))];
         contactSquare.userInteractionEnabled = YES;
         contactSquare.backgroundColor = kSquareColor;
         contactSquare.layer.cornerRadius = kSquareCornerRadius;
@@ -94,15 +95,20 @@
         contactSquare.layer.shadowOpacity = 0.4;
         contactSquare.layer.shadowRadius = 1.0;
         contactSquare.layer.shadowPath = rectangleShadowPath;
-        contactSquare.layer.shadowColor = [UIColor blackColor].CGColor;
-        contactSquare.layer.shadowOffset = CGSizeMake(3.0f, 3.0f);
-        contactSquare.layer.shadowOpacity = 0.4;
-        contactSquare.layer.shadowRadius = 1.0;
-        contactSquare.layer.shadowPath = rectangleShadowPath;
         
+        //UIImageView *iv = makeImageViewByFrame(CGRectMake((kSquareSideLength-48.f)/2, 4, 48.f, 48.f));
+        [contactSquare setImage:MF_PngOfDefaultSkin(@"head-portrait.png") forState:UIControlStateNormal];
+        //contactSquare.imageView.frame = CGRectMake((kSquareSideLength-48.f)/2, 4, 48.f, 48.f);
+        contactSquare.imageView.layer.borderWidth = 2;
+        contactSquare.imageView.layer.borderColor = [UIColor whiteColor].CGColor;
+        contactSquare.imageView.layer.cornerRadius = CGRectGetHeight(contactSquare.imageView.bounds) / 2;
+        contactSquare.imageView.clipsToBounds = YES;
         
+        //[contactSquare setTitle:@"联系人" forState:UIControlStateNormal];
+        //[contactSquare setTitleColor: [UIColor whiteColor] forState:UIControlStateNormal];
+        //contactSquare.titleLabel.font = [UIFont systemFontOfSize:10.0f];
         
-        UILabel *nameView = [[UILabel alloc] initWithFrame:CGRectMake(3, kSquareSideLength - 12, kSquareSideLength-2*3, 12.0f)];
+        UILabel *nameView = [[UILabel alloc] initWithFrame:CGRectMake(3, kSquareSideLength+2, kSquareSideLength-2*3, 12.0f)];
         nameView.backgroundColor = [UIColor clearColor];
         nameView.font = [UIFont systemFontOfSize:10.0f];
         nameView.textAlignment = NSTextAlignmentCenter;
@@ -111,7 +117,7 @@
         [contactSquare addSubview:nameView];
         [nameView release];
         
-        
+        /*
         UIImageView *iv = makeImageViewByFrame(CGRectMake((kSquareSideLength-48.f)/2, 4, 48.f, 48.f));
         iv.image = MF_PngOfDefaultSkin(@"head-portrait.png");
         [contactSquare addSubview:iv];
@@ -119,6 +125,7 @@
         iv.layer.borderColor = [UIColor whiteColor].CGColor;
         iv.layer.cornerRadius = CGRectGetHeight(iv.bounds) / 2;
         iv.clipsToBounds = YES;
+        */
         
         /*
         CALayer *layer = [CALayer layer];
@@ -145,13 +152,16 @@
         /*
          JSBadgeView *badgeView = [[JSBadgeView alloc] initWithParentView:rectangle alignment:JSBadgeViewAlignmentCenterLeft];
          badgeView.badgeText = [NSString stringWithFormat:@"%d", i];
-         */
+         
         
         UITapGestureRecognizer * gr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(clickContact:)];
         [contactSquare addGestureRecognizer:gr];
         [gr release];
-        
-        [scrollView addSubview:contactSquare];
+        */
+        [contactSquare addTarget:self action:@selector(clickContact:) forControlEvents:UIControlEventTouchUpInside];
+
+        [parentView addSubview:contactSquare];
+        [contactSquare release];
         //[scrollView sendSubviewToBack:rectangle];
         
         xOffset += kSquareSideLength + kMarginBetweenSquares;
@@ -159,18 +169,18 @@
         if (xOffset > self.view.frame.size.width - kSquareSideLength)
         {
             xOffset = kInitialXOffset;
-            yOffset += kSquareSideLength + kMarginBetweenSquares;
+            yOffset += kSquareSideLength + kMarginBetweenSquares + 16;
         }
     }
     
-    scrollView.contentSize = CGSizeMake(scrollView.frame.size.width, yOffset);
+    //scrollView.contentSize = CGSizeMake(scrollView.frame.size.width, yOffset);
 }
 
 
 #pragma mark - UITableView delegate 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 1;
+    return 5;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -192,7 +202,7 @@ static NSString *aCell=@"myCell";
     [arrViewOfContactRectangles enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         //DebugLog(@"row:%d,%d",idx,24*(indexPath.row)+idx);
         //DebugLog(@"text:%@",JOIN3(@"联系人:", SI(indexPath.row), @",", SI(24*(indexPath.row)+idx)));
-        if(idx <24){
+        if(idx <kNumContactsPerLoad){
             //((UILabel*)[[(UIView*)obj subviews] objectAtIndex:0]).text = JOIN3(@"联系人:", SI(indexPath.row), @",", SI(24*(indexPath.row)+idx));
         }
     }];
@@ -205,28 +215,28 @@ static NSString *aCell=@"myCell";
 }
 
 #pragma mark Actions
-- (void) clickContact:(UIGestureRecognizer *)gestureRecognizer {
-
-    CGPoint point = [gestureRecognizer locationInView:self.view];
+- (void) clickContact:(id)sender {
+    UIButton *btn = sender;
+    CGPoint point = btn.center;
     DebugLog(@"%@",NSStringFromCGPoint(point));
     NSInteger numberOfOptions = 9;
     NSArray *items = @[
                        [RNGridMenuItem emptyItem],
-                       [[[RNGridMenuItem alloc] initWithImage: MF_PngOfDefaultSkin(@"attachment.png") title:@"Attach"] autorelease],
+                       [[[RNGridMenuItem alloc] initWithImage: MF_PngOfDefaultSkin(@"phone.png") title:@"打电话"] autorelease],
                        [RNGridMenuItem emptyItem],
-                       [[[RNGridMenuItem alloc] initWithImage: MF_PngOfDefaultSkin(@"bluetooth.png")title:@"Bluetooth"] autorelease],
-                       [[[RNGridMenuItem alloc] initWithImage: MF_PngOfDefaultSkin(@"cube.png") title:@"Deliver"] autorelease],
-                       [[[RNGridMenuItem alloc] initWithImage: MF_PngOfDefaultSkin(@"download.png") title:@"Download"] autorelease],
+                       [[[RNGridMenuItem alloc] initWithImage: MF_PngOfDefaultSkin(@"message.png")title:@"发短信"] autorelease],
+                       [[[RNGridMenuItem alloc] initWithImage: MF_PngOfDefaultSkin(@"person.png")title:@"详情"] autorelease],
+                       [[[RNGridMenuItem alloc] initWithImage: MF_PngOfDefaultSkin(@"mail.png") title:@"发邮件"] autorelease],
                        [RNGridMenuItem emptyItem],
-                       [[[RNGridMenuItem alloc] initWithImage: MF_PngOfDefaultSkin(@"file.png") title:@"Source Code"] autorelease],
+                       [[[RNGridMenuItem alloc] initWithImage: MF_PngOfDefaultSkin(@"star.png") title:@"收藏"] autorelease],
                        [RNGridMenuItem emptyItem]
                        ];
     
-    RNGridMenu *av = [[RNGridMenu alloc] initWithItems:[items subarrayWithRange:NSMakeRange(0, numberOfOptions)]];
+    RNGridMenu *av = [[[RNGridMenu alloc] initWithItems:[items subarrayWithRange:NSMakeRange(0, numberOfOptions)]] autorelease];
     av.delegate = self;
     av.bounces = NO;
-    av.animationDuration = 0.2;
-    //av.blurExclusionPath = [UIBezierPath bezierPathWithOvalInRect:self.imageView.frame];
+    av.animationDuration = 0.07;
+    av.blurExclusionPath = [UIBezierPath bezierPathWithOvalInRect:btn.frame];
     av.backgroundPath = [UIBezierPath bezierPathWithOvalInRect:CGRectMake(0.f, 0.f, av.itemSize.width*3, av.itemSize.height*3)];
         // av.headerView = header;
     
