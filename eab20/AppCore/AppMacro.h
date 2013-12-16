@@ -9,13 +9,14 @@
 #ifndef SmartLife_AppMacro_h
 #define SmartLife_AppMacro_h
 
-#define debugSite @"http://192.168.1.3"
+#define debugSite @"http://192.168.1.101"
 
 #define baseURL  @"http://www.lifeblue.com.cn/WebService/Default.ashx"
 #define baseURL2 @"http://www.lifeblue.com.cn/WebService/Upload.ashx"
 #define baseURL3 @"www.lifeblue.com.cn/WebService/Upload/CallService" 
 #define appId @"MM101"
 
+#define isActiviated [AppSession whetherIsActiviated]
 #define isDebug [AppSession whetherIsDebug]
 #define whichAIT [AppSession whichAuthenticationInterfaceType]
 

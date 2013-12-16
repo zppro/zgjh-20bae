@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AC395502185ECEBC00B87255 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = AC395501185ECEBC00B87255 /* Settings.bundle */; };
+		AC395505185ED70800B87255 /* ActiviateController.m in Sources */ = {isa = PBXBuildFile; fileRef = AC395504185ED70800B87255 /* ActiviateController.m */; };
+		AC395523185EF41200B87255 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = AC39551F185EF41200B87255 /* Default-568h@2x.png */; };
+		AC395524185EF41200B87255 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = AC395520185EF41200B87255 /* Default.png */; };
+		AC395525185EF41200B87255 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = AC395521185EF41200B87255 /* Default@2x.png */; };
 		ACA606D9185AA79900523D4A /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACA606D8185AA79900523D4A /* Accelerate.framework */; };
 		ACAD44F218583BEA005ED3E9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACAD44F118583BEA005ED3E9 /* Foundation.framework */; };
 		ACAD44F418583BEA005ED3E9 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACAD44F318583BEA005ED3E9 /* CoreGraphics.framework */; };
@@ -16,7 +21,6 @@
 		ACAD450018583BEA005ED3E9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = ACAD44FF18583BEA005ED3E9 /* main.m */; };
 		ACAD450418583BEA005ED3E9 /* EAB2AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = ACAD450318583BEA005ED3E9 /* EAB2AppDelegate.m */; };
 		ACAD450718583BEA005ED3E9 /* eab20.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = ACAD450518583BEA005ED3E9 /* eab20.xcdatamodeld */; };
-		ACAD450918583BEA005ED3E9 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ACAD450818583BEA005ED3E9 /* Images.xcassets */; };
 		ACAD451118583BEA005ED3E9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACAD44F118583BEA005ED3E9 /* Foundation.framework */; };
 		ACAD451218583BEA005ED3E9 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACAD44F518583BEA005ED3E9 /* UIKit.framework */; };
 		ACAD451318583BEA005ED3E9 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACAD44F718583BEA005ED3E9 /* CoreData.framework */; };
@@ -84,6 +88,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		AC395501185ECEBC00B87255 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
+		AC395503185ED70800B87255 /* ActiviateController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActiviateController.h; sourceTree = "<group>"; };
+		AC395504185ED70800B87255 /* ActiviateController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActiviateController.m; sourceTree = "<group>"; };
+		AC39551F185EF41200B87255 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "Images/LaunchImage/Default-568h@2x.png"; sourceTree = "<group>"; };
+		AC395520185EF41200B87255 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Default.png; path = Images/LaunchImage/Default.png; sourceTree = "<group>"; };
+		AC395521185EF41200B87255 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default@2x.png"; path = "Images/LaunchImage/Default@2x.png"; sourceTree = "<group>"; };
 		ACA606D8185AA79900523D4A /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		ACAD44EE18583BEA005ED3E9 /* eab20.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = eab20.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ACAD44F118583BEA005ED3E9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -97,7 +107,6 @@
 		ACAD450218583BEA005ED3E9 /* EAB2AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EAB2AppDelegate.h; sourceTree = "<group>"; };
 		ACAD450318583BEA005ED3E9 /* EAB2AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EAB2AppDelegate.m; sourceTree = "<group>"; };
 		ACAD450618583BEA005ED3E9 /* eab20.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = eab20.xcdatamodel; sourceTree = "<group>"; };
-		ACAD450818583BEA005ED3E9 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		ACAD450E18583BEA005ED3E9 /* eab20Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = eab20Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		ACAD452618583D40005ED3E9 /* core.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = core.xcodeproj; path = ../core/core.xcodeproj; sourceTree = "<group>"; };
 		ACAD453618584139005ED3E9 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
@@ -193,6 +202,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		AC39551D185EE75200B87255 /* LaunchImage */ = {
+			isa = PBXGroup;
+			children = (
+				AC39551F185EF41200B87255 /* Default-568h@2x.png */,
+				AC395520185EF41200B87255 /* Default.png */,
+				AC395521185EF41200B87255 /* Default@2x.png */,
+			);
+			name = LaunchImage;
+			sourceTree = "<group>";
+		};
 		ACAD44E518583BEA005ED3E9 = {
 			isa = PBXGroup;
 			children = (
@@ -244,6 +263,8 @@
 				ACAD458B18595831005ED3E9 /* AppView */,
 				ACAD4553185842DA005ED3E9 /* AppCore */,
 				ACAD4554185842E3005ED3E9 /* AppModel */,
+				AC395503185ED70800B87255 /* ActiviateController.h */,
+				AC395504185ED70800B87255 /* ActiviateController.m */,
 				ACAD45CA1859FF3D005ED3E9 /* ContactActionController.h */,
 				ACAD45CB1859FF3D005ED3E9 /* ContactActionController.m */,
 				ACAD45B11859F846005ED3E9 /* ActionSideBarController.h */,
@@ -254,7 +275,6 @@
 				ACAD457B18589276005ED3E9 /* HomeController.m */,
 				ACAD450218583BEA005ED3E9 /* EAB2AppDelegate.h */,
 				ACAD450318583BEA005ED3E9 /* EAB2AppDelegate.m */,
-				ACAD450818583BEA005ED3E9 /* Images.xcassets */,
 				ACAD450518583BEA005ED3E9 /* eab20.xcdatamodeld */,
 				ACAD44FA18583BEA005ED3E9 /* Supporting Files */,
 			);
@@ -270,6 +290,7 @@
 				ACAD44FC18583BEA005ED3E9 /* InfoPlist.strings */,
 				ACAD44FF18583BEA005ED3E9 /* main.m */,
 				ACAD450118583BEA005ED3E9 /* eab20-Prefix.pch */,
+				AC395501185ECEBC00B87255 /* Settings.bundle */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -333,6 +354,7 @@
 		ACAD45651858641A005ED3E9 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				AC39551D185EE75200B87255 /* LaunchImage */,
 				ACAD4563185863FB005ED3E9 /* AppIcon */,
 				ACAD45641858640B005ED3E9 /* MBProgressHUD */,
 			);
@@ -461,12 +483,15 @@
 				ACAD45741858648A005ED3E9 /* Icon-Small.png in Resources */,
 				ACAD44FE18583BEA005ED3E9 /* InfoPlist.strings in Resources */,
 				ACAD45A41859A3EB005ED3E9 /* Documents in Resources */,
-				ACAD450918583BEA005ED3E9 /* Images.xcassets in Resources */,
+				AC395502185ECEBC00B87255 /* Settings.bundle in Resources */,
+				AC395524185EF41200B87255 /* Default.png in Resources */,
 				ACAD45721858648A005ED3E9 /* Icon-Small-50.png in Resources */,
 				ACAD45781858648A005ED3E9 /* iTunesArtwork.png in Resources */,
 				ACAD45791858648A005ED3E9 /* iTunesArtwork@2x.png in Resources */,
+				AC395525185EF41200B87255 /* Default@2x.png in Resources */,
 				ACAD45751858648A005ED3E9 /* Icon-Small@2x.png in Resources */,
 				ACAD45711858648A005ED3E9 /* Icon-72@2x.png in Resources */,
+				AC395523185EF41200B87255 /* Default-568h@2x.png in Resources */,
 				ACAD45701858648A005ED3E9 /* Icon-72.png in Resources */,
 				ACAD45771858648A005ED3E9 /* Icon@2x.png in Resources */,
 			);
@@ -490,6 +515,7 @@
 				ACAD45611858433A005ED3E9 /* AppSession.m in Sources */,
 				ACAD45CC1859FF3D005ED3E9 /* ContactActionController.m in Sources */,
 				ACAD45621858433A005ED3E9 /* GlobalObjectsContainer.m in Sources */,
+				AC395505185ED70800B87255 /* ActiviateController.m in Sources */,
 				ACAD459B1859675D005ED3E9 /* TSInfiniteScrollViewRow.m in Sources */,
 				ACAD45B31859F846005ED3E9 /* ActionSideBarController.m in Sources */,
 				ACAD45AE1859ED7F005ED3E9 /* DirectorySideBarController.m in Sources */,

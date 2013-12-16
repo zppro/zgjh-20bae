@@ -18,6 +18,14 @@ SYNTHESIZE_LESSER_SINGLETON_FOR_CLASS(AppSession);
 @synthesize authType;
 @synthesize authNodeInfos; 
 
++ (BOOL)whetherIsActiviated {
+    NSNumber *_isActiviated = AppSetting(APP_SETTING_IS_ACTIVIATED_KEY);
+    if (_isActiviated) {
+        return [_isActiviated boolValue];
+    }
+    return NO;
+}
+
 + (BOOL)whetherIsDebug {
     NSNumber *_isDebug = AppSetting(SETTING_DEBUG_KEY);
     if (_isDebug) {
@@ -29,6 +37,20 @@ SYNTHESIZE_LESSER_SINGLETON_FOR_CLASS(AppSession);
 + (AuthenticationInterfaceType) whichAuthenticationInterfaceType{
     AuthenticationInterfaceType type = [AppSetting(APP_SETTING_AUTHENENTICATION_INTERFACE_TYPE_KEY) intValue];
     return type;
+}
+
+- (NSString*) getActiviateUrl{
+    NSString *_activiateUrl;
+    NSString *baseActiviateUrl = isDebug ?  JOIN(debugSite, @"/EAB.Cert") :AppSetting(APP_SETTING_AUTH_BASE_URL_KEY);
+    NSRange r = [baseActiviateUrl rangeOfString:@"http://"];
+    if(r.length>0 && r.location==0){
+        
+    }
+    else{
+        baseActiviateUrl = JOIN(@"http://",baseActiviateUrl);
+    }
+    _activiateUrl = JOIN(baseActiviateUrl, @"/v2/Activiate/ActiviateMobile");
+    return _activiateUrl;
 }
 
 - (NSString*) getAuthUrl:(AuthenticationInterfaceType) aType{

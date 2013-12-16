@@ -11,6 +11,7 @@
 #import "ActionSideBarController.h"
 #import "ContactActionController.h"
 #import "JSBadgeView.h"
+#import "ActiviateController.h"
 
 #define kNumContactsPerLoad 20
 #define kViewBackgroundColor [UIColor colorWithRed:0.357 green:0.757 blue:0.357 alpha:1]
@@ -51,6 +52,18 @@
     */
     self.slideNavigationViewController.delegate = self;
     self.slideNavigationViewController.dataSource = self;
+    
+    
+}
+
+- (void) viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
+    
+    if(!isActiviated){
+        ActiviateController *activiateController = [[[ActiviateController alloc] init] autorelease];
+        UINavigationController *nav2 = [[UINavigationController alloc] initWithRootViewController:activiateController];
+        [self presentModalViewController:nav2 animated: YES];
+    }
 }
 
 - (void) createContactIn:(UIView *)parentView{
@@ -210,7 +223,7 @@ static NSString *aCell=@"myCell";
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    DebugLog(@"didSelect %d",indexPath.row);
+    DebugLog(@"didSelect %ld",(long)indexPath.row);
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
@@ -367,7 +380,7 @@ static NSString *aCell=@"myCell";
 #pragma mark - RNGridMenuDelegate
 
 - (void)gridMenu:(RNGridMenu *)gridMenu willDismissWithSelectedItem:(RNGridMenuItem *)item atIndex:(NSInteger)itemIndex {
-    NSLog(@"Dismissed with item %d: %@", itemIndex, item.title);
+    NSLog(@"Dismissed with item %ld: %@", (long)itemIndex, item.title);
 }
 
 @end

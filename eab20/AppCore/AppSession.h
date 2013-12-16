@@ -64,7 +64,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS_HEADER(AppSession);
 @property (nonatomic) AuthenticationObjectType authType;
 @property (nonatomic, retain) NSArray *authNodeInfos;
 
-
++ (BOOL)whetherIsActiviated;
 + (BOOL)whetherIsDebug;
 
 + (AuthenticationInterfaceType) whichAuthenticationInterfaceType;

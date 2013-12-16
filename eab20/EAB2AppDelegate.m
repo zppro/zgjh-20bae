@@ -16,8 +16,10 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    [self initSettings];
     
     self.window = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
+
     // Override point for customization after application launch.
     //self.window.backgroundColor = [UIColor blackColor];
     
@@ -65,12 +67,22 @@
     //MARK;
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
-    //认证地址
-    if (![defaults objectForKey:APP_SETTING_AUTH_BASE_URL_KEY]) {
-        [NSUserDefaults setString:@"115.236.175.109:16812"  forKey:APP_SETTING_AUTH_BASE_URL_KEY];
+    //是否激活
+    if (![defaults objectForKey:APP_SETTING_IS_ACTIVIATED_KEY]) {
+        [NSUserDefaults setBool:FALSE forKey:APP_SETTING_IS_ACTIVIATED_KEY];
     }
     
     //认证地址
+    if (![defaults objectForKey:APP_SETTING_ACTIVIATE_BASE_URL_KEY]) {
+        [NSUserDefaults setString:@"42.120.6.22:8889"  forKey:APP_SETTING_ACTIVIATE_BASE_URL_KEY];
+    }
+    
+    //认证地址
+    if (![defaults objectForKey:APP_SETTING_AUTH_BASE_URL_KEY]) {
+        [NSUserDefaults setString:@"42.120.6.22:8889"  forKey:APP_SETTING_AUTH_BASE_URL_KEY];
+    }
+    
+    //认证类型
     if (![defaults objectForKey:APP_SETTING_AUTHENENTICATION_INTERFACE_TYPE_KEY]) {
         [NSUserDefaults setInt:0 forKey:APP_SETTING_AUTHENENTICATION_INTERFACE_TYPE_KEY];
     }
