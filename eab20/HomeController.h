@@ -7,8 +7,11 @@
 //
 
 #import "AppBaseController.h"
+#import "ActionSideBarController.h"
 
+@interface HomeController : AppBaseController<UIScrollViewDelegate,UITableViewDataSource, UITableViewDelegate,MWFSlideNavigationViewControllerDelegate, MWFSlideNavigationViewControllerDataSource,RNGridMenuDelegate,
+    ActionSideBarDelegate,CInputAssistViewDelgate>
 
-@interface HomeController : AppBaseController<UIScrollViewDelegate,UITableViewDataSource, UITableViewDelegate,MWFSlideNavigationViewControllerDelegate, MWFSlideNavigationViewControllerDataSource,RNGridMenuDelegate>
+@property (nonatomic, retain) NSString * currentDirectoryPath; 
 
 @end

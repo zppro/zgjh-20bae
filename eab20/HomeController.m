@@ -30,10 +30,12 @@
 
 @synthesize myTableView;
 @synthesize arrContacts;
+@synthesize currentDirectoryPath;
 
 - (void)dealloc {
     self.myTableView = nil;
     self.arrContacts = nil;
+    self.currentDirectoryPath = nil;
     [super dealloc];
 }
 
@@ -88,7 +90,7 @@
         }];
     }
     else{
-        [self fetchDataLocal];
+        [self fetchDataLocal:nil];
     }
 }
 
@@ -127,7 +129,7 @@
                                                                                     rectangleBounds.size.width,
                                                                                             rectangleBounds.size.height))];
         contactSquare.userInteractionEnabled = YES;
-        contactSquare.backgroundColor = kSquareColor;
+        //contactSquare.backgroundColor = kSquareColor;
         contactSquare.layer.cornerRadius = kSquareCornerRadius;
         contactSquare.layer.shadowColor = [UIColor blackColor].CGColor;
         contactSquare.layer.shadowOffset = CGSizeMake(0.0f, 3.0f);
@@ -217,8 +219,8 @@
 
 
 #pragma mark - data 
-- (void)fetchDataLocal{
-    self.arrContacts = [CContactInfo listContactByDirectoryPath:nil];
+- (void)fetchDataLocal:(NSString*) keyword{
+    self.arrContacts = [CContactInfo listContactByDirectoryPath:nil andKeyword:keyword];
     [myTableView reloadData];
 }
 
@@ -243,12 +245,19 @@ static NSString *aCell=@"myCell";
         [self createContactIn:cell.contentView];
     }
     
+    DebugLog(@"%d",indexPath.row);
     [[cell.contentView subviews] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        //DebugLog(@"row:%d,%d",idx,24*(indexPath.row)+idx);
-        //DebugLog(@"text:%@",JOIN3(@"联系人:", SI(indexPath.row), @",", SI(24*(indexPath.row)+idx)));
-        CContactInfo *dataItem = [arrContacts objectAtIndex:kNumContactsPerLoad*(indexPath.row)+idx];
-        ((UILabel*)[[(UIView*)obj subviews] objectAtIndex:1]).text = dataItem.contactName;
+        if ([self.arrContacts count]>0 && idx<[self.arrContacts count]) {
+            ((UIView*)obj).backgroundColor = kSquareColor;
+            CContactInfo *dataItem = [arrContacts objectAtIndex:kNumContactsPerLoad*(indexPath.row)+idx];
+            ((UILabel*)[[(UIView*)obj subviews] objectAtIndex:1]).text = dataItem.contactName;
+        }
+        else{
+            ((UIView*)obj).backgroundColor = MF_ColorFromRGB(200, 200, 200);
+            ((UILabel*)[[(UIView*)obj subviews] objectAtIndex:1]).text = @"";
+        }
     }];
+    
     return cell;
 }
 
@@ -391,7 +400,7 @@ static NSString *aCell=@"myCell";
         return DirectorySideBarWidth;
     }
     else if(direction ==MWFSlideDirectionLeft){
-        return ActionSideBarWidth;
+        return ActionSideBarWidthForShow;
     }
     return 0;
 }
@@ -402,7 +411,9 @@ static NSString *aCell=@"myCell";
         return [[[DirectorySideBarController alloc] init] autorelease];
     }
     else if(direction == MWFSlideDirectionLeft){
-        return [[[ActionSideBarController alloc] init] autorelease];
+        ActionSideBarController *ctl = [[[ActionSideBarController alloc] init] autorelease];
+        ctl.delegate = self;
+        return ctl;
     }
     return  nil;
 }
@@ -411,6 +422,55 @@ static NSString *aCell=@"myCell";
 
 - (void)gridMenu:(RNGridMenu *)gridMenu willDismissWithSelectedItem:(RNGridMenuItem *)item atIndex:(NSInteger)itemIndex {
     NSLog(@"Dismissed with item %ld: %@", (long)itemIndex, item.title);
+}
+
+#pragma mark - ActionSideBarDelegate
+- (void) clickSearchBtn{
+    
+    [self _slide:MWFSlideDirectionNone];
+    
+    UIView *maskView = makeView(0, 0, self.view.width, self.view.height);
+    maskView.backgroundColor = MF_ColorFromRGBA(0, 0, 0,0.5);
+    [self.view addSubview:maskView];
+
+    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapMaskView:)];
+    [maskView addGestureRecognizer:tapGesture];
+    [tapGesture release];
+    
+    UITextField *searchField = [[UITextField alloc] initWithFrame:CGRectMake((maskView.width-280)/2.f,100.f,280.f, 40.f)];
+    searchField.font = [UIFont systemFontOfSize:18];
+    searchField.keyboardType = UIKeyboardTypeDefault;
+    searchField.keyboardAppearance = UIKeyboardAppearanceDefault;
+    searchField.backgroundColor = MF_ColorFromRGB(175, 175, 175);
+    searchField.placeholder = @"请输入关键字";
+    searchField.textAlignment = UITextAlignmentCenter;
+    searchField.inputAccessoryView = [CInputAssistView createWithDelegate:self target:searchField style:CInputAssistViewCancelAndDone];
+    searchField.clearButtonMode = UITextFieldViewModeWhileEditing;
+    [maskView addSubview:searchField];
+    [searchField release];
+    
+    [searchField becomeFirstResponder];
+}
+
+- (void)tapMaskView:(UIGestureRecognizer *)gestureRecognizer {
+    [gestureRecognizer.view removeFromSuperview];
+}
+
+#pragma mark - CInputAssistViewDelgate Method
+-(void)inputAssistViewPerviousTapped:(UITextField*)aTextFiled{
+}
+-(void)inputAssistViewNextTapped:(UITextField*)aTextFiled{
+}
+-(void)inputAssistViewCancelTapped:(UITextField*)aTextFiled{
+    [aTextFiled resignFirstResponder];
+    [aTextFiled.superview removeFromSuperview];
+}
+
+-(void)inputAssistViewDoneTapped:(UITextField*)aTextFiled{
+    [self fetchDataLocal:aTextFiled.text];
+    [myTableView reloadData];
+    [aTextFiled resignFirstResponder];
+    [aTextFiled.superview removeFromSuperview];
 }
 
 @end

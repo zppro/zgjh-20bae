@@ -11,18 +11,18 @@
 #import "CContactInfo.h"
 
 @interface ActionSideBarController ()
-
 @end
 
 @implementation ActionSideBarController
-- (void)dealloc { 
+
+- (void)dealloc {
     [super dealloc];
 }
 
 - (void)loadView{
     [super loadView];
-    self.view.width = ActionSideBarWidth;
-    self.view.backgroundColor = [UIColor whiteColor];
+    self.view.width = ActionSideBarWidthForShow;
+    self.view.backgroundColor= [UIColor whiteColor];
     
     UIButton *searchBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [searchBtn setFrame:CGRectMake((self.view.width - 48.f)/2.f,80.f, 48.f, 48.f)];
@@ -54,7 +54,12 @@
 }
 
 - (void) doSearch:(id) sender{
+    /*
     
+     */
+    if(self.delegate != nil){
+        [(id)_delegate performSelector:@selector(clickSearchBtn)];
+    }
 }
 
 - (void) doSync:(id) sender{
@@ -127,5 +132,7 @@
 - (void) doInfo:(id) sender{
     
 }
+
+
 
 @end

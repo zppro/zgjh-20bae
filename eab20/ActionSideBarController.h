@@ -8,8 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
-#define ActionSideBarWidth 50
+#define ActionSideBarWidthForShow 50
+
+@protocol ActionSideBarDelegate<NSObject>
+
+- (void)clickSearchBtn;
+
+@end
 
 @interface ActionSideBarController : AppBaseController
-
+@property (nonatomic, assign) id<ActionSideBarDelegate>   delegate;
 @end

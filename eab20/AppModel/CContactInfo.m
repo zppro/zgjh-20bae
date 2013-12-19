@@ -63,18 +63,35 @@
             nil];
 }
 
-+ (NSArray *)listContactByDirectoryPath:(NSString*) directoryPath{
++ (NSArray *)listContactByDirectoryPath:(NSString*) directoryPath andKeyword:(NSString*) keyword{
     NSArray* sorts = [NSArray arrayWithObjects:
                       [NSSortDescriptor sortDescriptorWithKey:@"directoryLevels" ascending:YES],
                       [NSSortDescriptor sortDescriptorWithKey:@"directoryOrderNo" ascending:YES],
                       [NSSortDescriptor sortDescriptorWithKey:@"contactOrderNo" ascending:YES],
                       nil];
-    if(directoryPath == nil){
+    if([directoryPath length] == 0 && [keyword length]== 0){
         return [CContactInfo fetchAllSortWith:sorts];
     }
     else{
         DKPredicateBuilder *builder = [[[DKPredicateBuilder alloc] init] autorelease];
-        [builder where:@"directoryPath" like:directoryPath];
+        if([directoryPath length] > 0){
+            [builder where:@"directoryPath" startsWith:directoryPath];
+        }
+    
+        if([keyword length] > 0){
+            DKPredicateBuilder *builderOr = [[[DKPredicateBuilder alloc] init] autorelease];
+            [builderOr where:@"contactCode" startsWith:keyword];
+            [builderOr where:@"uAAPNo" startsWith:keyword];
+            [builderOr where:@"contactName" startsWith:keyword];
+            [builderOr where:@"inputCode1" startsWith:keyword];
+            //[builderOr where:@"inputCode2" contains:keyword];
+
+            [builder where: builderOr.compoundDKPredicateTypeOr];
+        }
+        /*
+        NSString *condtions = builder.compoundPredicate.predicateFormat;
+        DebugLog(@"condtions:%@",condtions);
+        */
         return [CContactInfo fetchWithSort:sorts predicateWithFormat:builder.compoundPredicate.predicateFormat];
     }
 }
