@@ -12,16 +12,27 @@
 @implementation AppSession
 SYNTHESIZE_LESSER_SINGLETON_FOR_CLASS(AppSession);
 @synthesize networkStatus;
-@synthesize authId;
-@synthesize authName;
-@synthesize authToken;
-@synthesize authType;
-@synthesize authNodeInfos; 
+@synthesize mobile;
+@synthesize contactId;
+@synthesize contactName;
+@synthesize du;
+@synthesize sdn;
+@synthesize token;
+@synthesize apiUrl;
+
 
 + (BOOL)whetherIsActiviated {
     NSNumber *_isActiviated = AppSetting(APP_SETTING_IS_ACTIVIATED_KEY);
     if (_isActiviated) {
         return [_isActiviated boolValue];
+    }
+    return NO;
+}
+
++ (BOOL)whetherIsAuthorized {
+    NSString *_authToken = AppSetting(APP_SETTING_AUTH_TOKEN_KEY);
+    if (_authToken!=nil) {
+        return YES;
     }
     return NO;
 }
@@ -32,6 +43,16 @@ SYNTHESIZE_LESSER_SINGLETON_FOR_CLASS(AppSession);
         return [_isDebug boolValue];
     }
     return NO;
+}
+
++ (void)readSettings{
+    appSession.mobile = AppSetting(APP_SETTING_ACTIVIATED_MOBILE_KEY);
+    appSession.contactId = AppSetting(APP_SETTING_ACTIVIATED_CONTACT_ID_KEY);
+    appSession.contactName = AppSetting(APP_SETTING_ACTIVIATED_CONTACT_NAME_KEY);
+    appSession.du = AppSetting(APP_SETTING_AUTH_DU_KEY);
+    appSession.sdn = AppSetting(APP_SETTING_AUTH_SDN_KEY);
+    appSession.token = AppSetting(APP_SETTING_AUTH_TOKEN_KEY);
+    appSession.apiUrl = AppSetting(APP_SETTING_API_URL_KEY);
 }
 
 + (AuthenticationInterfaceType) whichAuthenticationInterfaceType{
@@ -75,32 +96,24 @@ SYNTHESIZE_LESSER_SINGLETON_FOR_CLASS(AppSession);
     return _authUrl;
 }
 
-- (NSString*) getBizUrl:(BizInterfaceType) aType withAccessPoint:(NSString*) accessPoint{
+- (NSString*) getBizUrl:(BizInterfaceType) aType{
     NSString *_bizUrl;
-    NSString *baseBizUrl = isDebug ?  JOIN(debugSite, @"/SmartLife.CertManage.MobileServices") :accessPoint;
+    NSString *baseBizUrl = isDebug ?  JOIN(debugSite, @"/EAB.API") :appSession.apiUrl;
     switch (aType) {
-        case BIT_GetRelationNamesWithOldMan:{
-            _bizUrl = JOIN(baseBizUrl, @"/Oca/FamilyMemberService.IPhone/GetRelationNamesWithOldMan");
+        case BIT_SyncDirectory:{
+            _bizUrl = JOIN(baseBizUrl, @"/Sync/IOS/SyncDirectory");
             break;
         }
-        case BIT_GetEmergencyServices:{
-            _bizUrl = JOIN(baseBizUrl, @"/Oca/CallService.IPhone/GetEmergency");
+        case BIT_SyncContactBySelf:{
+            _bizUrl = JOIN(baseBizUrl, @"/Sync/IOS/SyncContactBySelf");
             break;
         }
-        case BIT_GetServiceLogs:{
-            _bizUrl = JOIN(baseBizUrl, @"/Oca/CallService.IPhone/GetServiceLog");
+        case BIT_SyncContactByDLine:{
+            _bizUrl = JOIN(baseBizUrl, @"/Sync/IOS/SyncContactByDLine");
             break;
         }
-        case BIT_ResponseByFamilyMember:{
-            _bizUrl = JOIN(baseBizUrl, @"/Oca/CallService.IPhone/ResponseByFamilyMember");
-            break;
-        }
-        case BIT_LogByFamilyMember:{
-            _bizUrl = JOIN(baseBizUrl, @"/Oca/CallService.IPhone/LogByFamilyMember");
-            break;
-        }
-        case BIT_GetCallByOldMan:{
-            _bizUrl = JOIN(baseBizUrl, @"/Oca/CallService.IPhone/GetCallByOldMan");
+        case BIT_SyncContactBySELine:{
+            _bizUrl = JOIN(baseBizUrl, @"/Sync/IOS/SyncContactBySELine");
             break;
         }
         default:
@@ -109,88 +122,6 @@ SYNTHESIZE_LESSER_SINGLETON_FOR_CLASS(AppSession);
     }
     return _bizUrl;
 }
-
-
-- (NSInteger)getNWCode:(BizInterfaceType2) biz {
-    NSInteger NWCode = -1;
-    switch (biz) {
-        case Login:{
-            NWCode = 1;
-            break;
-        }
-        case ReadListOfEmergencyService:
-        {
-            switch (authType) {
-                case AOT_Contact:
-                {
-                    NWCode = 2;
-                    break;
-                }
-                default:
-                    break;
-            }
-            break;
-        }
-        case ReadListOfCommunityService:
-        {
-            switch (authType) {
-                case AOT_Contact:
-                {
-                    NWCode = 4;
-                    break;
-                }
-                default:
-                    break;
-            }
-            break;
-        }
-        case ReadListOfLifeService:
-        {
-            switch (authType) {
-                case AOT_Contact:
-                {
-                    NWCode = 3;
-                    break;
-                }
-                default:
-                    break;
-            }
-            break;
-        }
-        case ReadListOfProcessing:
-        {
-            NWCode = 12;
-            break;
-        }
-        case ReadListOfCamera:
-        {
-            NWCode = 5;
-            break;
-        }
-        case DoResponse:
-        {
-            NWCode = 108;
-            break;
-        }
-        case RegisterDevice:{
-            NWCode = 101;
-            break;
-        }
-        case SendServiceLog:{
-            NWCode = 106;
-            break;
-        }
-        default:
-            break;
-    }
-    
-    return NWCode;
-}
-
-- (void) abandon{
-    self.authId = nil;
-    self.authName = nil;
-    self.authType = AOT_None;
-}
+ 
 
 @end

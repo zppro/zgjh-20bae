@@ -15,8 +15,10 @@
 #define baseURL2 @"http://www.lifeblue.com.cn/WebService/Upload.ashx"
 #define baseURL3 @"www.lifeblue.com.cn/WebService/Upload/CallService" 
 #define appId @"MM101"
+#define invokeToAppId @"IP002"
 
 #define isActiviated [AppSession whetherIsActiviated]
+#define isAuthorized [AppSession whetherIsAuthorized]
 #define isDebug [AppSession whetherIsDebug]
 #define whichAIT [AppSession whichAuthenticationInterfaceType]
 

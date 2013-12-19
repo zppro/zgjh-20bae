@@ -9,11 +9,14 @@
 #import <UIKit/UIKit.h>
 
 
-@interface AppBaseController : BaseController<TableHeaderDelegate>
-@property (nonatomic, retain) UIView* containerView;
-@property(nonatomic,retain) TableHeaderView *headerView;
-@property (nonatomic,retain) UIView *footerView;
-@property (nonatomic, readonly,assign) CGPoint containerDefaultCenter;
-- (UIImage*) getFooterBackgroundImage;
+@interface AppBaseController : BaseController
+
+- (void)showWaitView;
+- (void)showWaitViewWithTitle:(NSString *)title;
+- (void)showWaitViewWithTitle:(NSString *)title withAnimation:(BOOL) animated;
+- (void)showWaitViewWithTitle:(NSString *)title andCloseDelay:(double) delayInSeconds;
+- (void)showWaitViewWithTitle:(NSString *)title andCloseDelay:(double) delayInSeconds withAnimation:(BOOL) animated;
+- (void)updateWaitViewWithTitle:(NSString *)title;
+- (void)closeWaitView;
 
 @end

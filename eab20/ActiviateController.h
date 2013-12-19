@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ActiviateController : UIViewController<BZGFormFieldDelegate>
+@interface ActiviateController : AppBaseController<BZGFormFieldDelegate>
 
 @end

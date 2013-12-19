@@ -18,6 +18,8 @@
 {
     [self initSettings];
     
+    [AppSession readSettings];
+    
     self.window = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
 
     // Override point for customization after application launch.
@@ -70,7 +72,7 @@
     //是否激活
     if (![defaults objectForKey:APP_SETTING_IS_ACTIVIATED_KEY]) {
         [NSUserDefaults setBool:FALSE forKey:APP_SETTING_IS_ACTIVIATED_KEY];
-    }
+    } 
     
     //认证地址
     if (![defaults objectForKey:APP_SETTING_ACTIVIATE_BASE_URL_KEY]) {

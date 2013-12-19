@@ -1,4 +1,36 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model name="Test1.xcdatamodel" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1" systemVersion="11A491" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
-    <elements/>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="3401" systemVersion="12F45" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="CContactInfo" representedClassName="CContactInfo" syncable="YES">
+        <attribute name="aliasName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="contactCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="contactId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="contactName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="contactOrderNo" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="directoryLevels" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="directoryOrderNo" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="directoryPath" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="doorNo" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="dTel" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="dTelShort" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="inputCode1" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="inputCode2" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="mobile" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="mobileShort" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="remark" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="uAAPNo" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="updateSourceType" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+    </entity>
+    <entity name="CDirectoryInfo" representedClassName="CDirectoryInfo" syncable="YES">
+        <attribute name="computeLevels" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="directoryId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="directoryName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="directoryPath" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="orderNo" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="parentId" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="CContactInfo" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="CDirectoryInfo" positionX="0" positionY="0" width="0" height="0"/>
+    </elements>
 </model>

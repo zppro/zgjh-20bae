@@ -9,6 +9,6 @@
 #import "AppBaseController.h"
 
 
-@interface HomeController : UIViewController<UIScrollViewDelegate,UITableViewDataSource, UITableViewDelegate,MWFSlideNavigationViewControllerDelegate, MWFSlideNavigationViewControllerDataSource,RNGridMenuDelegate>
+@interface HomeController : AppBaseController<UIScrollViewDelegate,UITableViewDataSource, UITableViewDelegate,MWFSlideNavigationViewControllerDelegate, MWFSlideNavigationViewControllerDataSource,RNGridMenuDelegate>
 
 @end

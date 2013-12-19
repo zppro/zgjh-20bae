@@ -12,6 +12,7 @@
 #import "ContactActionController.h"
 #import "JSBadgeView.h"
 #import "ActiviateController.h"
+#import "CContactInfo.h"
 
 #define kNumContactsPerLoad 20
 #define kViewBackgroundColor [UIColor colorWithRed:0.357 green:0.757 blue:0.357 alpha:1]
@@ -61,8 +62,33 @@
     
     if(!isActiviated){
         ActiviateController *activiateController = [[[ActiviateController alloc] init] autorelease];
-        UINavigationController *nav2 = [[UINavigationController alloc] initWithRootViewController:activiateController];
-        [self presentModalViewController:nav2 animated: YES];
+        [self presentModalViewController:activiateController animated: YES];
+    }
+    else if(!isAuthorized){
+        [self showWaitViewWithTitle:@"登录中..."];
+        NSDictionary *body = [NSDictionary dictionaryWithObjectsAndKeys: (isDebug?NI(1):NI(0)),@"RunMode",appId,@"ApplicationIdFrom",invokeToAppId,@"ApplicationIdTo",appSession.du,@"DU",appSession.sdn,@"SDN",nil];
+        HttpAppRequest *req = buildReq(body);
+        [HttpAppAsynchronous httpPostWithUrl:[appSession getAuthUrl:AIT_Contact] req:req sucessBlock:^(id result) {
+            DebugLog(@"ret:%@",((HttpAppResponse*)result).ret);
+            NSDictionary *dict = ((HttpAppResponse*)result).ret;
+            appSession.token = [dict objectForKey:@"Token"];
+            appSession.apiUrl = [e0571DES base64DecodeString:[dict objectForKey:@"RedirectUrl"] Key:[moDevice.udid substringToIndex:8]];
+            
+            savS(APP_SETTING_AUTH_TOKEN_KEY, appSession.token);
+            savS(APP_SETTING_API_URL_KEY, appSession.apiUrl);
+            //自动登录
+            
+            [self dismissModalViewControllerAnimated:YES];
+            
+        } failedBlock:^(NSError *error) {
+            //
+            DebugLog(@"%@",error);
+        } completionBlock:^{
+            [self closeWaitView];
+        }];
+    }
+    else{
+        [self fetchDataLocal];
     }
 }
 
@@ -190,10 +216,16 @@
 }
 
 
+#pragma mark - data 
+- (void)fetchDataLocal{
+    self.arrContacts = [CContactInfo listContactByDirectoryPath:nil];
+    [myTableView reloadData];
+}
+
 #pragma mark - UITableView delegate 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 5;
+    return [self.arrContacts count]/kNumContactsPerLoad +1;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -210,14 +242,12 @@ static NSString *aCell=@"myCell";
                                        reuseIdentifier:aCell] autorelease];
         [self createContactIn:cell.contentView];
     }
-    NSArray *arrViewOfContactRectangles =[[[cell.contentView subviews] objectAtIndex:0] subviews];
-    //DebugLog(@"%@",arrViewOfContactRectangles);
-    [arrViewOfContactRectangles enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+    
+    [[cell.contentView subviews] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         //DebugLog(@"row:%d,%d",idx,24*(indexPath.row)+idx);
         //DebugLog(@"text:%@",JOIN3(@"联系人:", SI(indexPath.row), @",", SI(24*(indexPath.row)+idx)));
-        if(idx <kNumContactsPerLoad){
-            //((UILabel*)[[(UIView*)obj subviews] objectAtIndex:0]).text = JOIN3(@"联系人:", SI(indexPath.row), @",", SI(24*(indexPath.row)+idx));
-        }
+        CContactInfo *dataItem = [arrContacts objectAtIndex:kNumContactsPerLoad*(indexPath.row)+idx];
+        ((UILabel*)[[(UIView*)obj subviews] objectAtIndex:1]).text = dataItem.contactName;
     }];
     return cell;
 }

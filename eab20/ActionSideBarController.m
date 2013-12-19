@@ -7,6 +7,8 @@
 //
 
 #import "ActionSideBarController.h"
+#import "CDirectoryInfo.h"
+#import "CContactInfo.h"
 
 @interface ActionSideBarController ()
 
@@ -56,7 +58,66 @@
 }
 
 - (void) doSync:(id) sender{
-    
+    if(isActiviated && isAuthorized){
+        [self showWaitViewWithTitle:@"同步机构目录..."];
+        
+        NSDictionary *head = [NSDictionary dictionaryWithObjectsAndKeys:appSession.token,@"Token",invokeToAppId,@"ApplicationIdTo",appSession.du,@"DU",appSession.sdn,@"SDN",nil];
+        HttpAppRequest *req = buildReq2(head);
+        [HttpAppAsynchronous httpGetWithUrl:[appSession getBizUrl:BIT_SyncDirectory] req:req sucessBlock:^(id result) {
+            if([CDirectoryInfo updateAll:(NSArray*)((HttpAppResponse*)result).rows]){
+                /** 读取联系人(基础) start **/
+                [self updateWaitViewWithTitle:@"同步联系人(基础)..."];
+                [HttpAppAsynchronous httpGetWithUrl:[appSession getBizUrl:BIT_SyncContactBySelf] req:req sucessBlock:^(id result) {
+                    
+                    if([CContactInfo updateWithData:(NSArray*)((HttpAppResponse*)result).rows ByType:UpdateSourceType_BySelf]){
+                    
+                        /** 读取联系人(部门条线) start **/
+                        [self updateWaitViewWithTitle:@"同步联系人(部门条线)..."];
+                        [HttpAppAsynchronous httpGetWithUrl:[appSession getBizUrl:BIT_SyncContactByDLine] req:req sucessBlock:^(id result) {
+                            
+                            if([CContactInfo updateWithData:(NSArray*)((HttpAppResponse*)result).rows ByType:UpdateSourceType_ByDLine]){
+                            
+                                /** 读取联系人(高管条线) start **/
+                                [self updateWaitViewWithTitle:@"同步联系人(高管条线)..."];
+                                [HttpAppAsynchronous httpGetWithUrl:[appSession getBizUrl:BIT_SyncContactBySELine] req:req sucessBlock:^(id result) {
+                                    [CContactInfo updateWithData:(NSArray*)((HttpAppResponse*)result).rows ByType:UpdateSourceType_BySELine];
+                                    [self updateWaitViewWithTitle:@"同步成功"];
+                                } failedBlock:^(NSError *error) {
+                                    //
+                                    DebugLog(@"%@",error);
+                                } completionBlock:^{
+                                    [self closeWaitView];
+                                }];
+                                /** 读取联系人(高管条线) end **/
+                            }
+                            
+                        } failedBlock:^(NSError *error) {
+                            //
+                            [self closeWaitView];
+                            DebugLog(@"%@",error);
+                        } completionBlock:^{
+                            
+                        }];
+                        /** 读取联系人(部门条线) end **/
+                    }
+                    
+                } failedBlock:^(NSError *error) {
+                    //
+                    [self closeWaitView];
+                    DebugLog(@"%@",error);
+                } completionBlock:^{
+                    
+                }];
+                /** 读取联系人(基础) end **/
+            }
+        } failedBlock:^(NSError *error) {
+            //
+            [self closeWaitView];
+            DebugLog(@"%@",error);
+        } completionBlock:^{
+            
+        }];
+    }
 }
 
 - (void) doSettings:(id) sender{

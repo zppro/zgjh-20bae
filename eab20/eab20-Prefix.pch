@@ -22,5 +22,6 @@
     #import "AppMacro.h"
     #import "AppSession.h"
     #import "AppRequestBuilder.h"
+    #import "AppBaseController.h"
     #import "UIScrollView+Paging.h"
 #endif

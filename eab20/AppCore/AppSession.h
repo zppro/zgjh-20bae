@@ -14,19 +14,7 @@ typedef enum {
     AOT_User,
     AOT_Contact
 }AuthenticationObjectType;
- 
 
-typedef enum {
-    Login,
-    ReadListOfEmergencyService,
-    ReadListOfCommunityService,
-    ReadListOfLifeService,
-    ReadListOfProcessing,
-    ReadListOfCamera,
-    DoResponse,
-    RegisterDevice,
-    SendServiceLog
-}BizInterfaceType2;
 
 typedef enum {
     AIT_User,
@@ -34,20 +22,12 @@ typedef enum {
 }AuthenticationInterfaceType;
 
 typedef enum {
-    BIT_GetRelationNamesWithOldMan,
-    BIT_GetEmergencyServices,
-    BIT_GetServiceLogs,
-    BIT_ResponseByFamilyMember,
-    BIT_LogByFamilyMember,
-    BIT_GetCallByOldMan
+    BIT_SyncDirectory,
+    BIT_SyncContactBySelf,
+    BIT_SyncContactByDLine,
+    BIT_SyncContactBySELine
 }BizInterfaceType;
 
-typedef enum {
-    ST_EmergencyService,//紧急救助
-    ST_FamilyService,//亲人通话
-    ST_InfotainmentService,//娱乐资讯
-    ST_LifeService//生活服务
-}ServiceType;
  
 
 @class CCallService;
@@ -57,24 +37,27 @@ SYNTHESIZE_SINGLETON_FOR_CLASS_HEADER(AppSession);
 
 @property (nonatomic) NetworkStatus networkStatus;
 
-
-@property (nonatomic, retain) NSString *authId;
-@property (nonatomic, retain) NSString *authName;
-@property (nonatomic, retain) NSString *authToken;
-@property (nonatomic) AuthenticationObjectType authType;
-@property (nonatomic, retain) NSArray *authNodeInfos;
+@property (nonatomic, retain) NSString *mobile;
+@property (nonatomic, retain) NSString *contactId;
+@property (nonatomic, retain) NSString *contactName;
+@property (nonatomic, retain) NSString *du;
+@property (nonatomic, retain) NSString *sdn;
+@property (nonatomic, retain) NSString *token;
+@property (nonatomic, retain) NSString *apiUrl;
 
 + (BOOL)whetherIsActiviated;
++ (BOOL)whetherIsAuthorized;
 + (BOOL)whetherIsDebug;
+
++ (void)readSettings;
 
 + (AuthenticationInterfaceType) whichAuthenticationInterfaceType;
 
+- (NSString*) getActiviateUrl;
+
 - (NSString*) getAuthUrl:(AuthenticationInterfaceType) aType;
 
-- (NSString*) getBizUrl:(BizInterfaceType) aType withAccessPoint:(NSString*) accessPoint;
+- (NSString*) getBizUrl:(BizInterfaceType) aType; 
 
-- (NSInteger)getNWCode:(BizInterfaceType2) biz;
-
-- (void) abandon;
 
 @end

@@ -38,6 +38,7 @@
     _mobileField.textField.keyboardAppearance = UIKeyboardAppearanceDefault;
     _mobileField.textField.backgroundColor = [UIColor whiteColor];
     _mobileField.textField.placeholder = @"请输入手机号码";
+    _mobileField.textField.text= @"18668001381";
     _mobileField.textField.clearButtonMode = UITextFieldViewModeWhileEditing;
     [_mobileField setTextValidationBlock:^BOOL(NSString *text) {
         NSString *mobileRegex = @"^((13[0-9])|(15[^4,\\D])|(18[0,0-9]))\\d{8}$";
@@ -58,6 +59,7 @@
     _mobileConfirmField.textField.keyboardAppearance = UIKeyboardAppearanceDefault;
     _mobileConfirmField.textField.backgroundColor = [UIColor whiteColor];
     _mobileConfirmField.textField.placeholder = @"再次输入手机号码";
+    _mobileConfirmField.textField.text= @"18668001381";
     _mobileConfirmField.textField.clearButtonMode = UITextFieldViewModeWhileEditing;
     [_mobileConfirmField setTextValidationBlock:^BOOL(NSString *text) {
         NSString *mobileRegex = @"^((13[0-9])|(15[^4,\\D])|(18[0,0-9]))\\d{8}$";
@@ -76,17 +78,81 @@
     _mobileConfirmField.delegate = self;
     [self.view addSubview:_mobileConfirmField];
     
-    UIButton *btnLogout = [UIButton buttonWithType:UIButtonTypeCustom];
-    [btnLogout setFrame:CGRectMake((self.view.width-548/2.f)/2.f,200.f,548/2.f, 82/2.f)];
-    //[btnLogout setTitle:@"退出当前账号" forState:UIControlStateNormal];
-    [btnLogout setBackgroundImage:MF_PngOfDefaultSkin(@"btnActiviate.png") forState:UIControlStateNormal];
-    [btnLogout addTarget:self action:@selector(doActiviate:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:btnLogout];
+    UIButton *btnActiviate = [UIButton buttonWithType:UIButtonTypeCustom];
+    [btnActiviate setFrame:CGRectMake((self.view.width-548/2.f)/2.f,150.f,548/2.f, 82/2.f)];
+    [btnActiviate setBackgroundImage:MF_PngOfDefaultSkin(@"btnActiviate.png") forState:UIControlStateNormal];
+    [btnActiviate addTarget:self action:@selector(doActiviate:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:btnActiviate];
     
+    UIButton *btnQuit = [UIButton buttonWithType:UIButtonTypeCustom];
+    [btnQuit setFrame:CGRectMake((self.view.width-548/2.f)/2.f,210.f,548/2.f, 82/2.f)];
+    [btnQuit setBackgroundImage:MF_PngOfDefaultSkin(@"btnQuit.png") forState:UIControlStateNormal];
+    [btnQuit addTarget:self action:@selector(doQuit:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:btnQuit];
 }
 
 - (void)doActiviate:(id)sender{
+    [self.mobileField.textField resignFirstResponder];
+    [self.mobileConfirmField.textField resignFirstResponder];
+    [self showWaitViewWithTitle:@"激活中..."];
+    NSString *key = [moDevice.udid substringToIndex:8];
     
+    appSession.du = [moDevice.udid reverseString];
+    appSession.sdn = [e0571DES base64EncodeString:JOIN2(self.mobileField.textField.text,@"|",moDevice.udid) Key:key];
+    savS(APP_SETTING_AUTH_DU_KEY, appSession.du);
+    savS(APP_SETTING_AUTH_SDN_KEY, appSession.sdn);
+    
+    NSDictionary *body = [NSDictionary dictionaryWithObjectsAndKeys:self.mobileField.textField.text,@"MobileNo",appSession.du,@"DU",appSession.sdn,@"SDN",nil];
+    HttpAppRequest *req = buildReq(body);
+     
+    [HttpAppAsynchronous httpPostWithUrl:[appSession getActiviateUrl] req:req sucessBlock:^(id result) {
+        //DebugLog(@"ret:%@",((HttpAppResponse*)result).ret);
+        NSDictionary *dict = ((HttpAppResponse*)result).ret;
+        appSession.mobile = self.mobileField.textField.text;
+        appSession.contactId = [dict objectForKey:@"ContactId"];
+        appSession.contactName = [dict objectForKey:@"ContactName"];
+        
+        savB(APP_SETTING_IS_ACTIVIATED_KEY, TRUE);
+        savS(APP_SETTING_ACTIVIATED_MOBILE_KEY, appSession.mobile);
+        savS(APP_SETTING_ACTIVIATED_CONTACT_ID_KEY, appSession.contactId);
+        savS(APP_SETTING_ACTIVIATED_CONTACT_NAME_KEY, appSession.contactName);
+        
+        [self updateWaitViewWithTitle:@"登录中..."];
+        //自动登录
+        NSDictionary *body2 = [NSDictionary dictionaryWithObjectsAndKeys: (isDebug?NI(1):NI(0)),@"RunMode",appId,@"ApplicationIdFrom",invokeToAppId,@"ApplicationIdTo",appSession.du,@"DU",appSession.sdn,@"SDN",nil];
+        HttpAppRequest *req2 = buildReq(body2);
+        [HttpAppAsynchronous httpPostWithUrl:[appSession getAuthUrl:AIT_Contact] req:req2 sucessBlock:^(id result) {
+            DebugLog(@"ret:%@",((HttpAppResponse*)result).ret);
+            NSDictionary *dict = ((HttpAppResponse*)result).ret;
+            appSession.token = [dict objectForKey:@"Token"];
+            appSession.apiUrl = [e0571DES base64DecodeString:[dict objectForKey:@"RedirectUrl"] Key:key];
+            
+            savS(APP_SETTING_AUTH_TOKEN_KEY, appSession.token);
+            savS(APP_SETTING_API_URL_KEY, appSession.apiUrl);
+            
+            //自动登录
+            
+            [self dismissModalViewControllerAnimated:YES];
+            
+        } failedBlock:^(NSError *error) {
+            //
+            DebugLog(@"%@",error);
+        } completionBlock:^{
+            [self closeWaitView];
+        }];
+        
+        
+    } failedBlock:^(NSError *error) {
+        //
+        DebugLog(@"%@",error);
+    } completionBlock:^{
+        [self closeWaitView];
+    }];
+
+}
+
+- (void)doQuit:(id)sender{
+    [self dismissModalViewControllerAnimated:YES];
 }
 
 #pragma mark - BZGFormFieldDelegate

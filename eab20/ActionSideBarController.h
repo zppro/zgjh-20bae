@@ -10,6 +10,6 @@
 
 #define ActionSideBarWidth 50
 
-@interface ActionSideBarController : UIViewController
+@interface ActionSideBarController : AppBaseController
 
 @end
