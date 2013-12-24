@@ -7,11 +7,15 @@
 //
 
 #import "AppBaseController.h"
+#import "DirectorySideBarController.h"
 #import "ActionSideBarController.h"
+ 
 
 @interface HomeController : AppBaseController<UIScrollViewDelegate,UITableViewDataSource, UITableViewDelegate,MWFSlideNavigationViewControllerDelegate, MWFSlideNavigationViewControllerDataSource,RNGridMenuDelegate,
-    ActionSideBarDelegate,CInputAssistViewDelgate>
+    DirectorySideBarDelegate,ActionSideBarDelegate,CInputAssistViewDelgate>
 
-@property (nonatomic, retain) NSString * currentDirectoryPath; 
+
+@property (nonatomic, retain) DirectorySideBarController * dsbCtl;
+@property (nonatomic, retain) ActionSideBarController * asbCtl;
 
 @end

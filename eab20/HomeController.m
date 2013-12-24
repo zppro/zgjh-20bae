@@ -7,12 +7,11 @@
 //
 
 #import "HomeController.h"
-#import "DirectorySideBarController.h"
-#import "ActionSideBarController.h"
 #import "ContactActionController.h"
 #import "JSBadgeView.h"
 #import "ActiviateController.h"
 #import "CContactInfo.h"
+#import "CDirectoryInfo.h"
 
 #define kNumContactsPerLoad 20
 #define kViewBackgroundColor [UIColor colorWithRed:0.357 green:0.757 blue:0.357 alpha:1]
@@ -30,19 +29,20 @@
 
 @synthesize myTableView;
 @synthesize arrContacts;
-@synthesize currentDirectoryPath;
+@synthesize dsbCtl;
+@synthesize asbCtl;
 
 - (void)dealloc {
     self.myTableView = nil;
     self.arrContacts = nil;
-    self.currentDirectoryPath = nil;
+    self.dsbCtl = nil;
+    self.asbCtl = nil;
     [super dealloc];
 }
 
 - (void)loadView
 {
     [super loadView];
-    
     
     myTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, self.view.width,self.view.height)];
     myTableView.delegate = self;
@@ -55,7 +55,6 @@
     */
     self.slideNavigationViewController.delegate = self;
     self.slideNavigationViewController.dataSource = self;
-    
     
 }
 
@@ -80,7 +79,7 @@
             savS(APP_SETTING_API_URL_KEY, appSession.apiUrl);
             //自动登录
             
-            [self dismissModalViewControllerAnimated:YES];
+            [self fetchDataLocalBy:nil and:nil];
             
         } failedBlock:^(NSError *error) {
             //
@@ -90,7 +89,7 @@
         }];
     }
     else{
-        [self fetchDataLocal:nil];
+        [self fetchDataLocalBy:nil and:nil];
     }
 }
 
@@ -219,8 +218,8 @@
 
 
 #pragma mark - data 
-- (void)fetchDataLocal:(NSString*) keyword{
-    self.arrContacts = [CContactInfo listContactByDirectoryPath:nil andKeyword:keyword];
+- (void)fetchDataLocalBy:(NSString*) directoryPath and:(NSString*) keyword{
+    self.arrContacts = [CContactInfo listContactByDirectoryPath:directoryPath andKeyword:keyword];
     [myTableView reloadData];
 }
 
@@ -245,7 +244,6 @@ static NSString *aCell=@"myCell";
         [self createContactIn:cell.contentView];
     }
     
-    DebugLog(@"%d",indexPath.row);
     [[cell.contentView subviews] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         if ([self.arrContacts count]>0 && idx<[self.arrContacts count]) {
             ((UIView*)obj).backgroundColor = kSquareColor;
@@ -408,12 +406,18 @@ static NSString *aCell=@"myCell";
 - (UIViewController *) slideNavigationViewController:(MWFSlideNavigationViewController *)controller viewControllerForSlideDirecton:(MWFSlideDirection)direction
 {
     if(direction == MWFSlideDirectionRight){
-        return [[[DirectorySideBarController alloc] init] autorelease];
+        if(self.dsbCtl==nil){
+            self.dsbCtl = [[[DirectorySideBarController alloc] init] autorelease];
+            self.dsbCtl.delegate = self;
+        }
+        return self.dsbCtl;
     }
     else if(direction == MWFSlideDirectionLeft){
-        ActionSideBarController *ctl = [[[ActionSideBarController alloc] init] autorelease];
-        ctl.delegate = self;
-        return ctl;
+        if(self.asbCtl==nil){
+            self.asbCtl = [[[ActionSideBarController alloc] init] autorelease];
+            self.asbCtl.delegate = self;
+        }
+        return self.asbCtl;
     }
     return  nil;
 }
@@ -456,6 +460,15 @@ static NSString *aCell=@"myCell";
     [gestureRecognizer.view removeFromSuperview];
 }
 
+#pragma mark - DirectorySideBarDelegate
+- (void)filter:(id)filterInfo and:(BOOL) autoBack{
+    
+    [self fetchDataLocalBy:((CDirectoryInfo*)filterInfo).directoryPath and:nil];
+    if(autoBack==YES){
+        [self _slide:MWFSlideDirectionNone];
+    }
+}
+
 #pragma mark - CInputAssistViewDelgate Method
 -(void)inputAssistViewPerviousTapped:(UITextField*)aTextFiled{
 }
@@ -467,8 +480,7 @@ static NSString *aCell=@"myCell";
 }
 
 -(void)inputAssistViewDoneTapped:(UITextField*)aTextFiled{
-    [self fetchDataLocal:aTextFiled.text];
-    [myTableView reloadData];
+    [self fetchDataLocalBy:nil and:aTextFiled.text];
     [aTextFiled resignFirstResponder];
     [aTextFiled.superview removeFromSuperview];
 }

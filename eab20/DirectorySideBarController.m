@@ -8,22 +8,26 @@
 
 #import "DirectorySideBarController.h"
 #import "CDirectoryInfo.h"
+#import "CContactInfo.h"
 
 @interface DirectorySideBarController ()<RATreeViewDelegate, RATreeViewDataSource>
-@property (retain, nonatomic) NSArray *data;
+@property (retain, nonatomic) NSArray *directoryInfos;
 @property (retain, nonatomic) id expanded;
 @property (retain, nonatomic) RATreeView *treeView;
+@property (retain, nonatomic) NSMutableDictionary *countOfContactForDirectoryPath;
 @end
 
 @implementation DirectorySideBarController
-@synthesize data;
+@synthesize directoryInfos=_directoryInfos;
 @synthesize expanded;
-@synthesize treeView;
+@synthesize treeView = _treeView;
+@synthesize countOfContactForDirectoryPath = _countOfContactForDirectoryPath;
 
 - (void)dealloc {
-    self.data = nil;
+    [_directoryInfos release];
     self.expanded = nil;
-    self.treeView = nil;
+    [_treeView release];
+    [_countOfContactForDirectoryPath release];
     [super dealloc];
 }
 
@@ -31,12 +35,25 @@
     [super loadView];
     self.view.width = DirectorySideBarWidth;
     self.view.backgroundColor = [UIColor whiteColor];
+    _countOfContactForDirectoryPath = [[NSMutableDictionary alloc] init];
     
+    _treeView = [[RATreeView alloc] initWithFrame:CGRectMake(0, 10, self.view.width, self.view.height-10)];
+    _treeView.delegate = self;
+    _treeView.dataSource = self;
+    _treeView.separatorStyle = RATreeViewCellSeparatorStyleSingleLine;
+    
+    [self.view addSubview:_treeView];
+    [_treeView release];
 }
 
+- (void)viewDidLoad{
+    [super viewDidLoad];
+    _directoryInfos = [CDirectoryInfo listDirectoryAsRoot];
+    [_treeView reloadData];
+}
 #pragma mark TreeView Delegate methods
 - (CGFloat)treeView:(RATreeView *)treeView heightForRowForItem:(id)item treeNodeInfo:(RATreeNodeInfo *)treeNodeInfo{
-    return 20;
+    return 40;
 }
 
 - (NSInteger)treeView:(RATreeView *)treeView indentationLevelForRowForItem:(id)item treeNodeInfo:(RATreeNodeInfo *)treeNodeInfo{
@@ -51,43 +68,110 @@
     if ([item isEqual:self.expanded]) {
         return YES;
     }
+    else if(treeDepthLevel==0){
+        return YES;
+    }
     return NO;
 }
 
 - (void)treeView:(RATreeView *)treeView willDisplayCell:(UITableViewCell *)cell forItem:(id)item treeNodeInfo:(RATreeNodeInfo *)treeNodeInfo{
-    cell.backgroundColor = MF_ColorFromRGB(128, 128, 128);
+    NSInteger numberOfChildren = [treeNodeInfo.children count];
+    if(numberOfChildren==0){
+        cell.imageView.image = MF_PngOfDefaultSkin(@"minus.png");
+    }
+    else{
+        if(treeNodeInfo.expanded){
+            //因为第一层自动打开
+            cell.imageView.image = MF_PngOfDefaultSkin(@"minus.png");
+        }
+        else{
+            cell.imageView.image = MF_PngOfDefaultSkin(@"plus.png");
+        }
+    }
+}
+
+
+- (NSString *)treeView:(RATreeView *)treeView titleForDeleteConfirmationButtonForRowForItem:(id)item treeNodeInfo:(RATreeNodeInfo *)treeNodeInfo{
+    return @"筛选";
+}
+
+- (void)treeView:(RATreeView *)treeView willExpandRowForItem:(id)item treeNodeInfo:(RATreeNodeInfo *)treeNodeInfo{
+    //NSInteger numberOfChildren = [treeNodeInfo.children count];
+    //DebugLog(@"Expand:%@",((CDirectoryInfo*)item).directoryName);
+    UITableViewCell * cell = [treeView cellForItem:item];
+    if(cell != nil){
+        cell.imageView.image = MF_PngOfDefaultSkin(@"minus.png");
+    }
+}
+
+- (void)treeView:(RATreeView *)treeView willCollapseRowForItem:(id)item treeNodeInfo:(RATreeNodeInfo *)treeNodeInfo{
+    NSInteger numberOfChildren = [treeNodeInfo.children count];
+    //DebugLog(@"Collapse:%@",((CDirectoryInfo*)item).directoryName);
+    UITableViewCell * cell = [treeView cellForItem:item];
+    if(cell != nil){
+        if(numberOfChildren==0){
+            cell.imageView.image = MF_PngOfDefaultSkin(@"minus.png");
+        }
+        else{
+            cell.imageView.image = MF_PngOfDefaultSkin(@"plus.png");
+        }
+    }
+}
+
+- (void)treeView:(RATreeView *)treeView didSelectRowForItem:(id)item treeNodeInfo:(RATreeNodeInfo *)treeNodeInfo{
+    //DebugLog(@"didSelect:%@",((CDirectoryInfo*)item).directoryName);
+    if(self.delegate != nil){
+        [self.delegate filter:item and:NO];
+    }
 }
 
 #pragma mark TreeView Data Source
 - (UITableViewCell *)treeView:(RATreeView *)treeView cellForItem:(id)item treeNodeInfo:(RATreeNodeInfo *)treeNodeInfo{
-    NSInteger numberOfChildren = [treeNodeInfo.children count];
-    UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"cell"];
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"Number of children %ld", (long)numberOfChildren];
-    cell.textLabel.text = ((CDirectoryInfo *)item).directoryName;
+    //NSInteger numberOfChildren = [treeNodeInfo.children count];
+    UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
+    CDirectoryInfo * directoryInfo = ((CDirectoryInfo *)item);
+    NSNumber *countOfDirectoryPath = [_countOfContactForDirectoryPath objectForKey:directoryInfo.directoryPath];
+    if(countOfDirectoryPath==nil){
+        countOfDirectoryPath = NI((int)[CContactInfo countContactByDirectoryPath:directoryInfo.directoryPath]);
+        [_countOfContactForDirectoryPath setValue:countOfDirectoryPath forKey:directoryInfo.directoryPath];
+    }
+    
+    //cell.detailTextLabel.text = MF_SWF(@"%@个联系人", countOfDirectoryPath);
+    cell.textLabel.text = MF_SWF(@"%@(%@)",directoryInfo.directoryName,countOfDirectoryPath);
+
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    //cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
+    
+    /*
     if (treeNodeInfo.treeDepthLevel == 0) {
         cell.detailTextLabel.textColor = [UIColor blackColor];
     }
+    */
     return cell;
 }
 
 - (NSInteger)treeView:(RATreeView *)treeView numberOfChildrenOfItem:(id)item{
     if (item == nil) {
-        return [self.data count];
+        return [_directoryInfos count];
     }
-    //RADataObject *data = item;
-    //return [data.children count];
-    return 1;
+    CDirectoryInfo *directoryInfo = item;
+    return [directoryInfo.children count];
 }
 
 - (id)treeView:(RATreeView *)treeView child:(NSInteger)index ofItem:(id)item{
-    //CDirectoryInfo *data = item;
     if (item == nil) {
-        return [self.data objectAtIndex:index];
+        return [_directoryInfos objectAtIndex:index];
     }
-    //
-    //return [data.children objectAtIndex:index];
-    return  nil;
+    CDirectoryInfo *directoryInfo = item;
+    return [directoryInfo.children objectAtIndex:index];
 }
 
+
+- (void)treeView:(RATreeView *)treeView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowForItem:(id)item treeNodeInfo:(RATreeNodeInfo *)treeNodeInfo{
+    if(editingStyle == UITableViewCellEditingStyleDelete){
+        if(self.delegate != nil){
+            [self.delegate filter:item and:YES];
+        }
+    }
+}
 @end

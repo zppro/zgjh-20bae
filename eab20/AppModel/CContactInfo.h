@@ -38,7 +38,7 @@ typedef enum {
 @property (nonatomic, retain) NSNumber * updateSourceType;
 
 + (NSArray *)listContactByDirectoryPath:(NSString*) directoryPath andKeyword:(NSString*) keyword;
-
++ (NSUInteger)countContactByDirectoryPath:(NSString*) directoryPath;
 + (BOOL)updateWithData:(NSArray *)data ByType:(UpdateSourceType) type;
 
 @end

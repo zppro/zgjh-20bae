@@ -17,6 +17,12 @@
 @dynamic parentId;
 @dynamic computeLevels;
 @dynamic orderNo;
+@synthesize children = _children;
+
+- (void)dealloc {
+    [_children release];
+    [super dealloc];
+}
 
 + (NSString*) localEntityKey{
     return @"directoryId";
@@ -53,6 +59,14 @@
 
 + (BOOL)updateAll:(NSArray *)data{
     return [CDirectoryInfo updateWithData:data EntityKey:[CDirectoryInfo localEntityKey] IEntityKey:[CDirectoryInfo dataSourceKey]];
+}
+
+- (NSArray*) children{
+    if(_children == nil){
+        
+        _children = [CDirectoryInfo listDirectoryByLevels: [self.computeLevels intValue]+1 andParent:[self.directoryId uppercaseString]];
+    }
+    return [_children retain];
 }
 
 @end

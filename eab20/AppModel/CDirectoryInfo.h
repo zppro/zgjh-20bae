@@ -22,4 +22,7 @@
 + (NSArray *)listDirectoryAsRoot;
 + (NSArray *)listDirectoryByLevels:(NSUInteger) level andParent:(NSString*) parentId;
 + (BOOL)updateAll:(NSArray *)data;
+
+@property (retain, nonatomic) NSArray *children;
+
 @end
