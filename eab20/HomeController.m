@@ -13,6 +13,7 @@
 #import "CContactInfo.h"
 #import "CDirectoryInfo.h"
 
+
 #define kNumContactsPerLoad 20
 #define kViewBackgroundColor [UIColor colorWithRed:0.357 green:0.757 blue:0.357 alpha:1]
 #define kSquareSideLength 64.0f
@@ -23,6 +24,8 @@
 @interface HomeController ()
 @property (nonatomic, retain) NSArray      *arrContacts;
 @property (nonatomic, retain) UITableView  *myTableView;
+@property (nonatomic) NSUInteger clickRow;
+@property (nonatomic) NSUInteger clickIndexAtRow;
 @end
 
 @implementation HomeController
@@ -31,6 +34,8 @@
 @synthesize arrContacts;
 @synthesize dsbCtl;
 @synthesize asbCtl;
+@synthesize clickRow;
+@synthesize clickIndexAtRow;
 
 - (void)dealloc {
     self.myTableView = nil;
@@ -127,6 +132,8 @@
                                                                                     yOffset,
                                                                                     rectangleBounds.size.width,
                                                                                             rectangleBounds.size.height))];
+        
+        contactSquare.tag = i;
         contactSquare.userInteractionEnabled = YES;
         //contactSquare.backgroundColor = kSquareColor;
         contactSquare.layer.cornerRadius = kSquareCornerRadius;
@@ -267,8 +274,14 @@ static NSString *aCell=@"myCell";
 #pragma mark Actions
 - (void) clickContact:(id)sender {
     UIButton *btn = sender;
+    UITableViewCell *cell = (UITableViewCell*)[btn superviewWithClass:[UITableViewCell class]];
+    NSIndexPath *indexPath = [myTableView indexPathForCell:cell];
+    //DebugLog(@"indexPath.row:%d,btn.tag:%d",indexPath.row,btn.tag);
+    clickRow = indexPath.row;
+    clickIndexAtRow = btn.tag;
+    
     CGPoint point = btn.center;
-    DebugLog(@"%@",NSStringFromCGPoint(point));
+    //DebugLog(@"%@",NSStringFromCGPoint(point));
     NSInteger numberOfOptions = 9;
     NSArray *items = @[
                        [RNGridMenuItem emptyItem],
@@ -278,7 +291,7 @@ static NSString *aCell=@"myCell";
                        [[[RNGridMenuItem alloc] initWithImage: MF_PngOfDefaultSkin(@"person.png")title:@"详情"] autorelease],
                        [[[RNGridMenuItem alloc] initWithImage: MF_PngOfDefaultSkin(@"mail.png") title:@"发邮件"] autorelease],
                        [RNGridMenuItem emptyItem],
-                       [[[RNGridMenuItem alloc] initWithImage: MF_PngOfDefaultSkin(@"star.png") title:@"收藏"] autorelease],
+                       [[[RNGridMenuItem alloc] initWithImage: MF_PngOfDefaultSkin(@"star.png") title:@"本地通讯录"] autorelease],
                        [RNGridMenuItem emptyItem]
                        ];
     
@@ -425,8 +438,74 @@ static NSString *aCell=@"myCell";
 #pragma mark - RNGridMenuDelegate
 
 - (void)gridMenu:(RNGridMenu *)gridMenu willDismissWithSelectedItem:(RNGridMenuItem *)item atIndex:(NSInteger)itemIndex {
-    NSLog(@"Dismissed with item %ld: %@", (long)itemIndex, item.title);
+    CContactInfo *dataItem = [arrContacts objectAtIndex:kNumContactsPerLoad*(clickRow)+clickIndexAtRow];
+    DebugLog(@"%d",itemIndex);
+    if(itemIndex == 1 || itemIndex == 3){
+        //打电话
+        NSArray *dTels = mt_Tel(dataItem.dTel);
+        NSArray *dTelShort = mt_phone_short(dataItem.dTelShort);
+        NSArray *mobile = mt_mobile(dataItem.mobile);
+        NSArray *mobileShort = mt_phone_short(dataItem.mobileShort);
+        NSArray *joined = JOINARR3(dTels,dTelShort,mobile,mobileShort);
+        /*
+        DebugLog(@"dTel with item:%@", dTels);
+        DebugLog(@"dTelShort with item:%@", dTelShort);
+        DebugLog(@"mobile with item:%@",mobile);
+        DebugLog(@"mobileShort with item:%@",mobileShort);
+        DebugLog(@"joined with item:%@",joined);
+        */
+        if([joined count] == 1){
+            //直接拨号
+            if(itemIndex==1){
+                call([joined firstObject]);
+            }
+            else{
+                sms([joined firstObject],self);
+            }
+        }
+        else if([joined count] >1){
+            NSString *sheetTitle = itemIndex == 1 ? @"请选择一个号码拨号":@"请选择一个号码发送短信";
+            UIActionSheet *phoneSheet = [UIActionSheet sheetWithTitle:sheetTitle];
+            
+            [joined each:^(id sender) {
+                NSString *phoneNo = sender;
+                [phoneSheet addButtonWithTitle:phoneNo handler:^void() {
+                    if(itemIndex==1){
+                        call(phoneNo);
+                    }
+                    else{
+                        sms(phoneNo,self);
+                    }
+                }];
+            }];
+            [phoneSheet setCancelButtonWithTitle:@"取消" handler:^void() {}];
+            [phoneSheet showInView:self.view];
+        }
+        else{
+            ShowError(@"没有找到任何号码");
+        }
+    }
+    else if (itemIndex == 4){
+        //
+    }
+    else if(itemIndex == 5){
+        //NSArray *mails = mt_Tel(dataItem.mails);
+    }
+    else if(itemIndex  == 7){
+        UIActionSheet *phoneSheet = [UIActionSheet sheetWithTitle:@"添加到本地通讯录"];
+        
+        [phoneSheet addButtonWithTitle:@"新建联系人" handler:^void() {
+            
+        }];
+        [phoneSheet addButtonWithTitle:@"添加到现有联系人" handler:^void() {
+            
+        }];
+        [phoneSheet setCancelButtonWithTitle:@"取消" handler:^void() {}];
+        [phoneSheet showInView:self.view];
+    }
+    
 }
+
 
 #pragma mark - ActionSideBarDelegate
 - (void) clickSearchBtn{

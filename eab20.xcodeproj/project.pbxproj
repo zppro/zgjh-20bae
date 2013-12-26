@@ -14,6 +14,7 @@
 		AC395525185EF41200B87255 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = AC395521185EF41200B87255 /* Default@2x.png */; };
 		AC39552B185FFACA00B87255 /* CContactInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = AC39552A185FFACA00B87255 /* CContactInfo.m */; };
 		AC39552E1860183600B87255 /* CDirectoryInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = AC39552D1860183600B87255 /* CDirectoryInfo.m */; };
+		AC690340186C6C9A00B2EE86 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC69033F186C6C9A00B2EE86 /* MessageUI.framework */; };
 		ACA606D9185AA79900523D4A /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACA606D8185AA79900523D4A /* Accelerate.framework */; };
 		ACAD44F218583BEA005ED3E9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACAD44F118583BEA005ED3E9 /* Foundation.framework */; };
 		ACAD44F418583BEA005ED3E9 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACAD44F318583BEA005ED3E9 /* CoreGraphics.framework */; };
@@ -100,6 +101,7 @@
 		AC39552A185FFACA00B87255 /* CContactInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CContactInfo.m; path = AppModel/CContactInfo.m; sourceTree = "<group>"; };
 		AC39552C1860183600B87255 /* CDirectoryInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDirectoryInfo.h; path = AppModel/CDirectoryInfo.h; sourceTree = "<group>"; };
 		AC39552D1860183600B87255 /* CDirectoryInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDirectoryInfo.m; path = AppModel/CDirectoryInfo.m; sourceTree = "<group>"; };
+		AC69033F186C6C9A00B2EE86 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		ACA606D8185AA79900523D4A /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		ACAD44EE18583BEA005ED3E9 /* eab20.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = eab20.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ACAD44F118583BEA005ED3E9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -174,6 +176,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AC690340186C6C9A00B2EE86 /* MessageUI.framework in Frameworks */,
 				ACA606D9185AA79900523D4A /* Accelerate.framework in Frameworks */,
 				ACAD45481858413A005ED3E9 /* QuartzCore.framework in Frameworks */,
 				ACAD44F618583BEA005ED3E9 /* UIKit.framework in Frameworks */,
@@ -239,10 +242,11 @@
 		ACAD44F018583BEA005ED3E9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				ACA606D8185AA79900523D4A /* Accelerate.framework */,
+				ACAD452618583D40005ED3E9 /* core.xcodeproj */,
 				ACAD45501858428B005ED3E9 /* libxml2.dylib */,
 				ACAD454E18584283005ED3E9 /* libz.dylib */,
-				ACAD452618583D40005ED3E9 /* core.xcodeproj */,
+				ACA606D8185AA79900523D4A /* Accelerate.framework */,
+				AC69033F186C6C9A00B2EE86 /* MessageUI.framework */,
 				ACAD454A1858415B005ED3E9 /* GameKit.framework */,
 				ACAD453618584139005ED3E9 /* AddressBook.framework */,
 				ACAD453718584139005ED3E9 /* AddressBookUI.framework */,
@@ -656,7 +660,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_OBJC_ARC = NO;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Hang Zhou Leblue Technology Co., Ltd.";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "eab20/eab20-Prefix.pch";
 				INFOPLIST_FILE = "eab20/eab20-Info.plist";
@@ -666,7 +670,7 @@
 					"-all_load",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "E464B11E-A643-46C8-AC83-25234118903C";
+				PROVISIONING_PROFILE = "";
 				USER_HEADER_SEARCH_PATHS = "../../com.zppro/core/**";
 				VALID_ARCHS = "armv7 armv7s arm64";
 				WRAPPER_EXTENSION = app;
@@ -680,7 +684,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_OBJC_ARC = NO;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Hang Zhou Leblue Technology Co., Ltd.";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "eab20/eab20-Prefix.pch";
 				INFOPLIST_FILE = "eab20/eab20-Info.plist";
@@ -691,7 +695,7 @@
 					"-all_load",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "E464B11E-A643-46C8-AC83-25234118903C";
+				PROVISIONING_PROFILE = "";
 				USER_HEADER_SEARCH_PATHS = "../../com.zppro/core/**";
 				VALID_ARCHS = "armv7 armv7s arm64";
 				WRAPPER_EXTENSION = app;
