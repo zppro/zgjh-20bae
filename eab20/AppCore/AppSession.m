@@ -45,6 +45,18 @@ SYNTHESIZE_LESSER_SINGLETON_FOR_CLASS(AppSession);
     return NO;
 }
 
++ (BOOL)whetherIsSynced{
+    NSNumber *_isSynced = AppSetting(APP_SETTING_IS_SYNCED_KEY);
+    if (_isSynced) {
+        return [_isSynced boolValue];
+    }
+    return NO;
+}
+
++ (BOOL)whetherCanAccessAB{
+    return ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusAuthorized;
+}
+
 + (void)readSettings{
     appSession.mobile = AppSetting(APP_SETTING_ACTIVIATED_MOBILE_KEY);
     appSession.contactId = AppSetting(APP_SETTING_ACTIVIATED_CONTACT_ID_KEY);

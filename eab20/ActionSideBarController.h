@@ -14,8 +14,15 @@
 
 - (void)clickSearchBtn;
 
+- (void)beginSync:(NSString*) title;
+
+- (void)updateSync:(NSString*) title;
+
+- (void)endSync;
+
 @end
 
 @interface ActionSideBarController : AppBaseController
 @property (nonatomic, assign) id<ActionSideBarDelegate>   delegate;
+- (void) doSyncFirst;
 @end

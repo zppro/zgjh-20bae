@@ -20,6 +20,8 @@
 @dynamic doorNo;
 @dynamic dTel;
 @dynamic dTelShort;
+@dynamic hTel;
+@dynamic eMail;
 @dynamic mobile;
 @dynamic mobileShort;
 @dynamic remark;
@@ -30,6 +32,7 @@
 @dynamic directoryOrderNo;
 @dynamic contactOrderNo;
 @dynamic updateSourceType;
+
 
 + (NSString*) localEntityKey{
     return @"contactId";
@@ -50,6 +53,8 @@
             @"doorNo", @"DoorNo",
             @"dTel", @"DTel",
             @"dTelShort", @"DTelShort",
+            @"hTel", @"HTel",
+            @"eMail", @"EMail",
             @"mobile", @"Mobile",
             @"mobileShort", @"MobileShort",
             @"remark", @"Remark",
@@ -60,6 +65,7 @@
             @"directoryOrderNo", @"DirectoryOrderNo",
             @"contactOrderNo", @"ContactOrderNo",
             @"updateSourceType", @"UpdateSourceType",
+            
             nil];
 }
 

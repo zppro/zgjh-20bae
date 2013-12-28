@@ -227,6 +227,11 @@
 #pragma mark - data 
 - (void)fetchDataLocalBy:(NSString*) directoryPath and:(NSString*) keyword{
     self.arrContacts = [CContactInfo listContactByDirectoryPath:directoryPath andKeyword:keyword];
+    if(!isSynced){
+        self.asbCtl = [[[ActionSideBarController alloc] init] autorelease];
+        self.asbCtl.delegate = self;
+        [self.asbCtl doSyncFirst];
+    }
     [myTableView reloadData];
 }
 
@@ -440,13 +445,10 @@ static NSString *aCell=@"myCell";
 - (void)gridMenu:(RNGridMenu *)gridMenu willDismissWithSelectedItem:(RNGridMenuItem *)item atIndex:(NSInteger)itemIndex {
     CContactInfo *dataItem = [arrContacts objectAtIndex:kNumContactsPerLoad*(clickRow)+clickIndexAtRow];
     DebugLog(@"%d",itemIndex);
+    
     if(itemIndex == 1 || itemIndex == 3){
-        //打电话
-        NSArray *dTels = mt_Tel(dataItem.dTel);
-        NSArray *dTelShort = mt_phone_short(dataItem.dTelShort);
-        NSArray *mobile = mt_mobile(dataItem.mobile);
-        NSArray *mobileShort = mt_phone_short(dataItem.mobileShort);
-        NSArray *joined = JOINARR3(dTels,dTelShort,mobile,mobileShort);
+        //打电话 
+        NSArray *joined = JOINARR4(mt_Tel(dataItem.dTel),mt_phone_short(dataItem.dTelShort),mt_Tel(dataItem.hTel),mt_mobile(dataItem.mobile),mt_phone_short(dataItem.mobileShort));
         /*
         DebugLog(@"dTel with item:%@", dTels);
         DebugLog(@"dTelShort with item:%@", dTelShort);
@@ -489,23 +491,132 @@ static NSString *aCell=@"myCell";
         //
     }
     else if(itemIndex == 5){
-        //NSArray *mails = mt_Tel(dataItem.mails);
+        NSArray *mails = mt_mail(dataItem.eMail);
+        if([mails count] > 0){
+            mail(mails,self);
+        }
+        else{
+            ShowError(@"没有找到任何邮箱地址");
+        }
     }
     else if(itemIndex  == 7){
-        UIActionSheet *phoneSheet = [UIActionSheet sheetWithTitle:@"添加到本地通讯录"];
         
-        [phoneSheet addButtonWithTitle:@"新建联系人" handler:^void() {
+        if(canAccessAB){
+            UIActionSheet *phoneSheet = [UIActionSheet sheetWithTitle:@"添加到本地通讯录"];
+           
+            [phoneSheet addButtonWithTitle:@"新建联系人" handler:^void() {
+                [self showWaitViewWithTitle:@"添加联系人..."];
+                ABAddressBookRef addressBook = [ABAddressBook sharedAddressBook].addressBookRef; // create address book record
+                //ABAddressBookRef addressBook = ABAddressBookCreate(); // create address book record
+                ABRecordRef person = ABPersonCreate(); // create a person
+                
+                [self saveAB:dataItem as:person in:addressBook complete:^void() {
+                    ABAddressBookAddRecord(addressBook, person, nil); //add the new person to the record
+                    ABAddressBookSave(addressBook, nil); //save the record
+                    CFRelease(person); // relase the ABRecordRef  variable
+                    [self closeWaitView];
+                }];
+                
+                
+            }];
+            [phoneSheet addButtonWithTitle:@"添加到现有联系人" handler:^void() {
+                
+                ABAddressBook *addressBook = [ABAddressBook sharedAddressBook]; // create address book record
+                
+                ABPeoplePickerNavigationController *peoplePicker = [[ABPeoplePickerNavigationController alloc] init];
+                NSNumber* firstNameProp = [NSNumber numberWithInt:kABPersonFirstNameProperty];
+                NSNumber* lastNameProp = [NSNumber numberWithInt:kABPersonLastNameProperty];
+                [peoplePicker setAddressBook:addressBook.addressBookRef];
+                peoplePicker.displayedProperties = [NSArray arrayWithObjects:firstNameProp,lastNameProp, nil];
+                [peoplePicker setPeoplePickerDelegate:self];
+                [self presentModalViewController:peoplePicker animated:YES];
+                [peoplePicker release];
+            }];
+            [phoneSheet setCancelButtonWithTitle:@"取消" handler:^void() {}];
+            [phoneSheet showInView:self.view];
             
-        }];
-        [phoneSheet addButtonWithTitle:@"添加到现有联系人" handler:^void() {
-            
-        }];
-        [phoneSheet setCancelButtonWithTitle:@"取消" handler:^void() {}];
-        [phoneSheet showInView:self.view];
+        }
+        else{
+            ShowError(@"当前程序不允许访问本地通讯录，请到设置里开通");
+        }
     }
     
 }
 
+- (void) saveAB:(CContactInfo *)dataItem as:(ABRecordRef)person in:(ABAddressBookRef) addressBook complete:(dispatch_block_t) c{
+    
+    __block NSString * lastName = substring(dataItem.contactName,0,1);
+    __block NSString * firstName = substring(dataItem.contactName,1,[dataItem.contactName length]-1);
+    __block NSArray *mails = mt_mail(dataItem.eMail);
+    __block NSArray *joined = JOINARR4(mt_Tel(dataItem.dTel),mt_phone_short(dataItem.dTelShort),mt_Tel(dataItem.hTel),mt_mobile(dataItem.mobile),mt_phone_short(dataItem.mobileShort));
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        
+        
+        
+        ABRecordSetValue(person, kABPersonFirstNameProperty, firstName , nil); // first name of the new person
+        ABRecordSetValue(person, kABPersonLastNameProperty, lastName, nil); // his last name
+        
+        
+        if([joined count]>0){
+            //Phone number is a list of phone number, so create a multivalue
+            ABMutableMultiValueRef phoneNumberMultiValue = ABMultiValueCreateMutable(kABPersonPhoneProperty);
+            [joined each:^(id sender) {
+                DebugLog(@"add phone:%@",sender);
+                ABMultiValueAddValueAndLabel(phoneNumberMultiValue ,sender,kABPersonPhoneMobileLabel, NULL);
+            }];
+            ABRecordSetValue(person, kABPersonPhoneProperty, phoneNumberMultiValue, nil); // set the phone number property
+            CFRelease(phoneNumberMultiValue);
+        }
+        
+        if([mails count]>0){
+            ABMutableMultiValueRef emailMultiValue = ABMultiValueCreateMutable(kABPersonEmailProperty);
+            [mails each:^(id sender) {
+                ABMultiValueAddValueAndLabel(emailMultiValue ,sender,kABWorkLabel, NULL);
+            }];
+            ABRecordSetValue(person, kABPersonEmailProperty, emailMultiValue, nil);
+            CFRelease(emailMultiValue);
+        }
+        
+        //ABRecordRef group = ABGroupCreate(); //create a group
+        //ABRecordSetValue(group, kABGroupNameProperty,@"My Group", nil); // set group's name
+        //ABGroupAddMember(group, person, nil); // add the person to the group
+        //ABAddressBookAddRecord(addressBook, group, nil); // add the group
+        
+        dispatch_async(dispatch_get_main_queue(), c);
+    });
+    
+    
+}
+
+// Called after the user has pressed cancel
+// The delegate is responsible for dismissing the peoplePicker
+- (void)peoplePickerNavigationControllerDidCancel:(ABPeoplePickerNavigationController *)peoplePicker{
+    [peoplePicker dismissViewControllerAnimated:YES completion:nil];
+}
+
+// Called after a person has been selected by the user.
+// Return YES if you want the person to be displayed.
+// Return NO  to do nothing (the delegate is responsible for dismissing the peoplePicker).
+- (BOOL)peoplePickerNavigationController:(ABPeoplePickerNavigationController *)peoplePicker shouldContinueAfterSelectingPerson:(ABRecordRef)person{
+    [self showWaitViewWithTitle:@"更新联系人..."];
+    
+    CContactInfo *dataItem = [arrContacts objectAtIndex:kNumContactsPerLoad*(clickRow)+clickIndexAtRow];
+    [self saveAB:dataItem as:person in:peoplePicker.addressBook complete:^{
+        ABAddressBookAddRecord(peoplePicker.addressBook, person, nil); //add the new person to the record
+        ABAddressBookSave(peoplePicker.addressBook, nil); //save the record
+        [self closeWaitView];
+        [peoplePicker dismissViewControllerAnimated:YES completion:nil];
+    }];
+    
+    return NO;
+}
+// Called after a value has been selected by the user.
+// Return YES if you want default action to be performed.
+// Return NO to do nothing (the delegate is responsible for dismissing the peoplePicker).
+- (BOOL)peoplePickerNavigationController:(ABPeoplePickerNavigationController *)peoplePicker shouldContinueAfterSelectingPerson:(ABRecordRef)person property:(ABPropertyID)property identifier:(ABMultiValueIdentifier)identifier{
+    return YES;
+}
 
 #pragma mark - ActionSideBarDelegate
 - (void) clickSearchBtn{
@@ -537,6 +648,21 @@ static NSString *aCell=@"myCell";
 
 - (void)tapMaskView:(UIGestureRecognizer *)gestureRecognizer {
     [gestureRecognizer.view removeFromSuperview];
+}
+
+- (void) beginSync:(NSString*) title{
+    savB(APP_SETTING_IS_SYNCED_KEY, TRUE);
+    [self _slide:MWFSlideDirectionNone];
+    [self showWaitViewWithTitle:title];
+}
+
+- (void) updateSync:(NSString *)title{
+    [self updateWaitViewWithTitle:title];
+}
+
+- (void) endSync{
+    [self closeWaitView];
+    [self fetchDataLocalBy:nil and:nil];
 }
 
 #pragma mark - DirectorySideBarDelegate

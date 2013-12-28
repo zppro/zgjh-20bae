@@ -22,4 +22,5 @@
 #define APP_SETTING_AUTH_TOKEN_KEY @"auth_token" //token
 #define APP_SETTING_API_URL_KEY @"api_url"
 
+#define APP_SETTING_IS_SYNCED_KEY @"is_synced"
 #endif

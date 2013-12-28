@@ -19,6 +19,7 @@
 
 #define isActiviated [AppSession whetherIsActiviated]
 #define isAuthorized [AppSession whetherIsAuthorized]
+#define isSynced [AppSession whetherIsSynced]
 #define isDebug [AppSession whetherIsDebug]
 #define whichAIT [AppSession whichAuthenticationInterfaceType]
 

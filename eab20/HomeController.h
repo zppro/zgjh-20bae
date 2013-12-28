@@ -9,10 +9,10 @@
 #import "AppBaseController.h"
 #import "DirectorySideBarController.h"
 #import "ActionSideBarController.h"
- 
+#import <AddressBookUI/AddressBookUI.h>
 
 @interface HomeController : AppBaseController<UIScrollViewDelegate,UITableViewDataSource, UITableViewDelegate,MWFSlideNavigationViewControllerDelegate, MWFSlideNavigationViewControllerDataSource,RNGridMenuDelegate,
-    DirectorySideBarDelegate,ActionSideBarDelegate,CInputAssistViewDelgate>
+    DirectorySideBarDelegate,ActionSideBarDelegate,CInputAssistViewDelgate,ABPeoplePickerNavigationControllerDelegate>
 
 
 @property (nonatomic, retain) DirectorySideBarController * dsbCtl;

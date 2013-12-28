@@ -17,8 +17,9 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     [self initSettings];
-    
     [AppSession readSettings];
+    
+    [self askLocalPermission];
     
     self.window = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
 
@@ -64,6 +65,15 @@
     // Saves changes in the application's managed object context before the application terminates.
 }
 
+-(void)askLocalPermission{
+    if (isABAccessNotDetermined) {
+        ABAddressBookRef addressBookRef = ABAddressBookCreateWithOptions(NULL, NULL);
+        ABAddressBookRequestAccessWithCompletion(addressBookRef, ^(bool granted, CFErrorRef error) {
+            // First time access has been granted, add the contact
+            DebugLog(@"%d",granted);
+        });
+    }
+}
 //系统第一次运行时，初始化参数
 -(void)initSettings {
     //MARK;
@@ -72,7 +82,9 @@
     //是否激活
     if (![defaults objectForKey:APP_SETTING_IS_ACTIVIATED_KEY]) {
         [NSUserDefaults setBool:FALSE forKey:APP_SETTING_IS_ACTIVIATED_KEY];
-    } 
+    }
+    
+    
     
     //认证地址
     if (![defaults objectForKey:APP_SETTING_ACTIVIATE_BASE_URL_KEY]) {
@@ -93,6 +105,12 @@
     if (![defaults objectForKey:SETTING_DEBUG_KEY]) {
         [NSUserDefaults setBool:FALSE forKey:SETTING_DEBUG_KEY];
     }
+    
+    //是否同步过
+    if (![defaults objectForKey:APP_SETTING_IS_SYNCED_KEY]) {
+        [NSUserDefaults setBool:FALSE forKey:APP_SETTING_IS_SYNCED_KEY];
+    }
+    
     //设置版本
     [NSUserDefaults setString:[[NSBundle mainBundle] bundleVersion]  forKey:SETTING_DEPLOY_VERSION_KEY];
     [defaults synchronize];

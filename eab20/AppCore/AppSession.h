@@ -48,6 +48,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS_HEADER(AppSession);
 + (BOOL)whetherIsActiviated;
 + (BOOL)whetherIsAuthorized;
 + (BOOL)whetherIsDebug;
++ (BOOL)whetherIsSynced;
 
 + (void)readSettings;
 

@@ -26,6 +26,8 @@ typedef enum {
 @property (nonatomic, retain) NSString * doorNo;
 @property (nonatomic, retain) NSString * dTel;
 @property (nonatomic, retain) NSString * dTelShort;
+@property (nonatomic, retain) NSString * hTel;
+@property (nonatomic, retain) NSString * eMail;
 @property (nonatomic, retain) NSString * mobile;
 @property (nonatomic, retain) NSString * mobileShort;
 @property (nonatomic, retain) NSString * remark;
@@ -36,6 +38,7 @@ typedef enum {
 @property (nonatomic, retain) NSNumber * directoryOrderNo;
 @property (nonatomic, retain) NSNumber * contactOrderNo;
 @property (nonatomic, retain) NSNumber * updateSourceType;
+
 
 + (NSArray *)listContactByDirectoryPath:(NSString*) directoryPath andKeyword:(NSString*) keyword;
 + (NSUInteger)countContactByDirectoryPath:(NSString*) directoryPath;
