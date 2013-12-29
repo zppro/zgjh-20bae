@@ -12,9 +12,9 @@
 #import "ActiviateController.h"
 #import "CContactInfo.h"
 #import "CDirectoryInfo.h"
+#import "ContactDetailView.h"
 
-
-#define kNumContactsPerLoad 16
+#define kNumContactsPerLoad (IS_IPHONE5?20:16)
 #define kViewBackgroundColor [UIColor colorWithRed:0.357 green:0.757 blue:0.357 alpha:1]
 #define kSquareSideLength 64.0f
 #define kSquareCornerRadius 10.0f
@@ -150,12 +150,15 @@
         contactSquare.tag = i;
         contactSquare.userInteractionEnabled = YES;
         //contactSquare.backgroundColor = kSquareColor;
+        //contactSquare.layer.backgroundColor = myTableView.backgroundColor.CGColor;
+        
         contactSquare.layer.cornerRadius = kSquareCornerRadius;
         contactSquare.layer.shadowColor = [UIColor blackColor].CGColor;
         contactSquare.layer.shadowOffset = CGSizeMake(0.0f, 3.0f);
         contactSquare.layer.shadowOpacity = 0.4;
         contactSquare.layer.shadowRadius = 1.0;
         contactSquare.layer.shadowPath = rectangleShadowPath;
+        /**/
         
         //UIImageView *iv = makeImageViewByFrame(CGRectMake((kSquareSideLength-48.f)/2, 4, 48.f, 48.f));
         [contactSquare setImage:MF_PngOfDefaultSkin(@"head-portrait.png") forState:UIControlStateNormal];
@@ -164,6 +167,7 @@
         contactSquare.imageView.layer.borderColor = [UIColor whiteColor].CGColor;
         contactSquare.imageView.layer.cornerRadius = CGRectGetHeight(contactSquare.imageView.bounds) / 2;
         contactSquare.imageView.clipsToBounds = YES;
+        contactSquare.backgroundColor = [UIColor clearColor];
         
         //[contactSquare setTitle:@"联系人" forState:UIControlStateNormal];
         //[contactSquare setTitleColor: [UIColor whiteColor] forState:UIControlStateNormal];
@@ -230,7 +234,7 @@
         if (xOffset > self.view.frame.size.width - kSquareSideLength)
         {
             xOffset = kInitialXOffset;
-            yOffset += kSquareSideLength + kMarginBetweenSquares + 16;
+            yOffset += kSquareSideLength + 2*kMarginBetweenSquares + 16;
         }
     }
     
@@ -283,7 +287,7 @@ static NSString *aCell=@"myCell";
             ((UILabel*)[[(UIView*)obj subviews] objectAtIndex:1]).text = @"";
         }
     }];
-    
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     return cell;
 }
 
@@ -504,7 +508,20 @@ static NSString *aCell=@"myCell";
         }
     }
     else if (itemIndex == 4){
-        //
+        //个人详细信息
+        UIView *maskView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.width, self.view.height)];
+        maskView.backgroundColor = MF_ColorFromRGBA(0, 0, 0,0.5);
+        [self.view addSubview:maskView];
+        [maskView release];
+        
+        UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapMaskView:)];
+        [maskView addGestureRecognizer:tapGesture];
+        [tapGesture release];
+        
+        ContactDetailView *cdv = [[ContactDetailView alloc] initWithFrame:CGRectMake((maskView.width-227.f)/2.f, (maskView.height-332.f)/2.f, 227.f, 332.f) andData:dataItem];
+        [maskView addSubview:cdv];
+        [cdv release];
+        
     }
     else if(itemIndex == 5){
         NSArray *mails = mt_mail(dataItem.eMail);

@@ -64,6 +64,7 @@
 		ACAD45AE1859ED7F005ED3E9 /* DirectorySideBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = ACAD45AD1859ED7F005ED3E9 /* DirectorySideBarController.m */; };
 		ACAD45B31859F846005ED3E9 /* ActionSideBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = ACAD45B21859F846005ED3E9 /* ActionSideBarController.m */; };
 		ACAD45CC1859FF3D005ED3E9 /* ContactActionController.m in Sources */ = {isa = PBXBuildFile; fileRef = ACAD45CB1859FF3D005ED3E9 /* ContactActionController.m */; };
+		ACEEA8D2187021A400AE5EF1 /* ContactDetailView.m in Sources */ = {isa = PBXBuildFile; fileRef = ACEEA8D1187021A400AE5EF1 /* ContactDetailView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -169,6 +170,8 @@
 		ACAD45B21859F846005ED3E9 /* ActionSideBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActionSideBarController.m; sourceTree = "<group>"; };
 		ACAD45CA1859FF3D005ED3E9 /* ContactActionController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactActionController.h; sourceTree = "<group>"; };
 		ACAD45CB1859FF3D005ED3E9 /* ContactActionController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactActionController.m; sourceTree = "<group>"; };
+		ACEEA8D0187021A400AE5EF1 /* ContactDetailView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContactDetailView.h; path = AppView/ContactDetailView.h; sourceTree = "<group>"; };
+		ACEEA8D1187021A400AE5EF1 /* ContactDetailView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ContactDetailView.m; path = AppView/ContactDetailView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -378,6 +381,8 @@
 		ACAD458B18595831005ED3E9 /* AppView */ = {
 			isa = PBXGroup;
 			children = (
+				ACEEA8D0187021A400AE5EF1 /* ContactDetailView.h */,
+				ACEEA8D1187021A400AE5EF1 /* ContactDetailView.m */,
 			);
 			name = AppView;
 			sourceTree = "<group>";
@@ -525,6 +530,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ACEEA8D2187021A400AE5EF1 /* ContactDetailView.m in Sources */,
 				AC39552E1860183600B87255 /* CDirectoryInfo.m in Sources */,
 				ACAD457C18589276005ED3E9 /* HomeController.m in Sources */,
 				ACAD45611858433A005ED3E9 /* AppSession.m in Sources */,

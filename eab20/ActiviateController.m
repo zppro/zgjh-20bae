@@ -38,7 +38,7 @@
     _mobileField.textField.keyboardAppearance = UIKeyboardAppearanceDefault;
     _mobileField.textField.backgroundColor = [UIColor whiteColor];
     _mobileField.textField.placeholder = @"请输入手机号码";
-    _mobileField.textField.text= @"18668001381";
+    _mobileField.textField.text= @"";
     _mobileField.textField.clearButtonMode = UITextFieldViewModeWhileEditing;
     [_mobileField setTextValidationBlock:^BOOL(NSString *text) {
         NSString *mobileRegex = @"^((13[0-9])|(15[^4,\\D])|(18[0,0-9]))\\d{8}$";
@@ -59,7 +59,7 @@
     _mobileConfirmField.textField.keyboardAppearance = UIKeyboardAppearanceDefault;
     _mobileConfirmField.textField.backgroundColor = [UIColor whiteColor];
     _mobileConfirmField.textField.placeholder = @"再次输入手机号码";
-    _mobileConfirmField.textField.text= @"18668001381";
+    _mobileConfirmField.textField.text= @"";
     _mobileConfirmField.textField.clearButtonMode = UITextFieldViewModeWhileEditing;
     [_mobileConfirmField setTextValidationBlock:^BOOL(NSString *text) {
         NSString *mobileRegex = @"^((13[0-9])|(15[^4,\\D])|(18[0,0-9]))\\d{8}$";
