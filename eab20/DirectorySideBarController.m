@@ -34,16 +34,38 @@
 - (void)loadView{
     [super loadView];
     self.view.width = DirectorySideBarWidth;
-    self.view.backgroundColor = [UIColor whiteColor];
     _countOfContactForDirectoryPath = [[NSMutableDictionary alloc] init];
     
-    _treeView = [[RATreeView alloc] initWithFrame:CGRectMake(0, 10, self.view.width, self.view.height-10)];
+    _treeView = [[RATreeView alloc] initWithFrame:CGRectMake(0, 0, self.view.width, self.view.height)];
     _treeView.delegate = self;
     _treeView.dataSource = self;
-    _treeView.separatorStyle = RATreeViewCellSeparatorStyleSingleLine;
+    _treeView.separatorStyle = RATreeViewCellSeparatorStyleNone;
+    _treeView.backgroundColor = MF_ColorFromRGB(52, 53, 53);
     
     [self.view addSubview:_treeView];
     [_treeView release];
+    
+    UIView * headView  = [[UIView alloc] initWithFrame:CGRectMake(0, 35, self.view.width, 35.f)];
+    headView.backgroundColor = MF_ColorFromRGB(38, 38, 38);
+    
+    UIImageView *splitView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 35-2.5, self.view.width, 2.5)];
+    splitView.image = MF_PngOfDefaultSkin(@"cellSplit.png");
+    [headView addSubview:splitView];
+    [splitView release];
+    
+    
+    UILabel *headTitleView = [[UILabel alloc] initWithFrame:CGRectMake(0, 10.f, self.view.width, 22.5f)];
+    headTitleView.textColor = [UIColor whiteColor];
+    headTitleView.textAlignment = UITextAlignmentCenter;
+    headTitleView.backgroundColor = [UIColor clearColor];
+    headTitleView.font = [UIFont fontWithName:@"Helvetica-Bold" size:16];//[UIFont systemFontOfSize:16];//
+    headTitleView.text = @"部门";
+    [headView addSubview:headTitleView];
+    [headTitleView release];
+    
+    _treeView.treeHeaderView = headView;
+    [headView release];
+    
 }
 
 - (void)viewDidLoad{
@@ -57,7 +79,7 @@
 }
 
 - (NSInteger)treeView:(RATreeView *)treeView indentationLevelForRowForItem:(id)item treeNodeInfo:(RATreeNodeInfo *)treeNodeInfo{
-    return 3 * treeNodeInfo.treeDepthLevel;
+    return 2 * treeNodeInfo.treeDepthLevel;
 }
 
 - (BOOL)treeView:(RATreeView *)treeView shouldExpandItem:(id)item treeNodeInfo:(RATreeNodeInfo *)treeNodeInfo{
@@ -138,8 +160,12 @@
     
     //cell.detailTextLabel.text = MF_SWF(@"%@个联系人", countOfDirectoryPath);
     cell.textLabel.text = MF_SWF(@"%@(%@)",directoryInfo.directoryName,countOfDirectoryPath);
-
+    cell.textLabel.textColor = MF_ColorFromRGB(204, 205, 206);
+    int fontSize = treeNodeInfo.treeDepthLevel > 0 ? 16:18;
+    cell.textLabel.font = [UIFont fontWithName:@"Helvetica" size:fontSize];
+    //DebugLog(@"text:%@ treeDepthLevel:%d",directoryInfo.directoryName,treeNodeInfo.treeDepthLevel);
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    cell.backgroundColor = [UIColor clearColor];
     //cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
     
     /*
@@ -147,6 +173,11 @@
         cell.detailTextLabel.textColor = [UIColor blackColor];
     }
     */
+    UIImageView *splitView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 40-2.5, treeView.width, 2.5)];
+    splitView.image = MF_PngOfDefaultSkin(@"cellSplit.png");
+    [cell addSubview:splitView];
+    [splitView release];
+    
     return cell;
 }
 

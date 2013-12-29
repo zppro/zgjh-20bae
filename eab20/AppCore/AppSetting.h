@@ -23,4 +23,6 @@
 #define APP_SETTING_API_URL_KEY @"api_url"
 
 #define APP_SETTING_IS_SYNCED_KEY @"is_synced"
+
+#define APP_DISPLAY_NAME  @"中国建设银行浙江省分行通讯录"
 #endif

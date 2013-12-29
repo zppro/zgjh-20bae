@@ -22,7 +22,7 @@
 
 @end
 
-@interface ActionSideBarController : AppBaseController
+@interface ActionSideBarController : AppBaseController<UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic, assign) id<ActionSideBarDelegate>   delegate;
 - (void) doSyncFirst;
 @end
