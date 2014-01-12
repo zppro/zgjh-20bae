@@ -10,12 +10,13 @@
 
 #define DirectorySideBarWidth 230
 
+
 @protocol DirectorySideBarDelegate<NSObject>
 
 - (void)filter:(id)filterInfo and:(BOOL) autoBack;
 
 @end
 
-@interface DirectorySideBarController : UIViewController
+@interface DirectorySideBarController : AppBaseController
 @property (nonatomic, assign) id<DirectorySideBarDelegate>   delegate;
 @end

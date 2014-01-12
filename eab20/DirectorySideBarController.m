@@ -73,14 +73,19 @@
 
 - (void)viewDidLoad{
     [super viewDidLoad];
-    _directoryInfos = [CDirectoryInfo listDirectoryAsRoot];
     
-    [_treeView reloadData];
     
 }
 
-- (void)viewWillAppear:(BOOL)animated{
-    
+- (void)viewDidAppear:(BOOL)animated{
+    if(_directoryInfos == nil){
+        [self showWaitViewWithTitle:@"读取中..."];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            _directoryInfos = [CDirectoryInfo listDirectoryAsRoot];
+            [_treeView reloadData];
+            [self closeWaitView];
+        });
+    }
 }
 
 #pragma mark TreeView Delegate methods
