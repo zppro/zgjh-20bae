@@ -12,6 +12,7 @@
 
 @interface CDirectoryInfo : BaseModel
 
+@property (nonatomic, retain) NSString * dPK;
 @property (nonatomic, retain) NSString * directoryId;
 @property (nonatomic, retain) NSString * directoryName;
 @property (nonatomic, retain) NSString * directoryPath;
@@ -21,6 +22,7 @@
 
 + (NSArray *)listDirectoryAsRoot;
 + (NSArray *)listDirectoryByLevels:(NSUInteger) level andParent:(NSString*) parentId;
++ (CDirectoryInfo*) loadAsStaff:(NSString*) directoryId;
 + (BOOL)updateAll:(NSArray *)data;
 
 @property (retain, nonatomic) NSArray *children;

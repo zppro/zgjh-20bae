@@ -8,6 +8,7 @@
 
 #import "AppSession.h"
 #import "AppSetting.h"
+#import "CDirectoryInfo.h"
 
 @implementation AppSession
 SYNTHESIZE_LESSER_SINGLETON_FOR_CLASS(AppSession);
@@ -15,6 +16,12 @@ SYNTHESIZE_LESSER_SINGLETON_FOR_CLASS(AppSession);
 @synthesize mobile;
 @synthesize contactId;
 @synthesize contactName;
+@synthesize mappingDirectoryId;
+@synthesize directoryIdOfLevel2;
+@synthesize directoryIdOfLevel3;
+@synthesize selectedDirectoryId;
+@synthesize isSE;
+@synthesize contactProperty;
 @synthesize du;
 @synthesize sdn;
 @synthesize token;
@@ -112,20 +119,28 @@ SYNTHESIZE_LESSER_SINGLETON_FOR_CLASS(AppSession);
     NSString *_bizUrl;
     NSString *baseBizUrl = isDebug ?  JOIN(debugSite, @"/EAB.API") :appSession.apiUrl;
     switch (aType) {
+        case BIT_SyncSelfInfo:{
+            _bizUrl = JOIN(baseBizUrl, @"/Sync/IOS/SyncSelfInfo");
+            break;
+        }
         case BIT_SyncDirectory:{
             _bizUrl = JOIN(baseBizUrl, @"/Sync/IOS/SyncDirectory");
             break;
         }
+        case BIT_SyncContact:{
+            _bizUrl = JOIN(baseBizUrl, @"/Sync/IOS/SyncContact");
+            break;
+        }
         case BIT_SyncContactBySelf:{
-            _bizUrl = JOIN(baseBizUrl, @"/Sync/IOS/SyncContactBySelf");
+            _bizUrl = JOIN(baseBizUrl, @"/Sync/IOS/SyncContactBySelf2");
             break;
         }
         case BIT_SyncContactByDLine:{
-            _bizUrl = JOIN(baseBizUrl, @"/Sync/IOS/SyncContactByDLine");
+            _bizUrl = JOIN(baseBizUrl, @"/Sync/IOS/SyncContactByDLine2");
             break;
         }
         case BIT_SyncContactBySELine:{
-            _bizUrl = JOIN(baseBizUrl, @"/Sync/IOS/SyncContactBySELine");
+            _bizUrl = JOIN(baseBizUrl, @"/Sync/IOS/SyncContactBySELine2");
             break;
         }
         default:

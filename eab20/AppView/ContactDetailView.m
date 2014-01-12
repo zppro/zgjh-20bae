@@ -82,8 +82,7 @@
         myTableView.delegate = self;
         myTableView.dataSource = self;
         myTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-        [self addSubview:myTableView];
-        [myTableView release];
+        [self addSubview:myTableView]; 
         
     }
     return self;

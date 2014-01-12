@@ -26,6 +26,7 @@
 @property (nonatomic, retain) UITableView  *myTableView;
 @property (nonatomic) NSUInteger clickRow;
 @property (nonatomic) NSUInteger clickIndexAtRow;
+@property (nonatomic, retain) NSMutableArray *arrSelecedContacts;
 @end
 
 @implementation HomeController
@@ -36,18 +37,20 @@
 @synthesize asbCtl;
 @synthesize clickRow;
 @synthesize clickIndexAtRow;
-
+@synthesize arrSelecedContacts = _arrSelecedContacts;
 - (void)dealloc {
     self.myTableView = nil;
     self.arrContacts = nil;
     self.dsbCtl = nil;
     self.asbCtl = nil;
+    [_arrSelecedContacts release];
     [super dealloc];
 }
 
 - (void)loadView
 {
     [super loadView];
+    
     
     UIView * headView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 62.0f)];
     headView.backgroundColor = [UIColor whiteColor];
@@ -98,7 +101,15 @@
             savS(APP_SETTING_API_URL_KEY, appSession.apiUrl);
             //自动登录
             
-            [self fetchDataLocalBy:nil and:nil];
+            appSession.mappingDirectoryId = AppSetting(APP_SETTING_MAPPING_DIRECTORY_ID_KEY);
+            appSession.directoryIdOfLevel2 = AppSetting(APP_SETTING_DIRECTORY_ID_OF_LEVEL2_KEY);
+            appSession.directoryIdOfLevel3 = AppSetting(APP_SETTING_DIRECTORY_ID_OF_LEVEL3_KEY);
+            appSession.isSE = AppSettingBool(APP_SETTING_IS_SE_KEY);
+            appSession.contactProperty = AppSetting(APP_SETTING_CONTACT_PROPERTY_KEY);
+            
+            CDirectoryInfo *selectedDirectoryInfo = [CDirectoryInfo loadAsStaff:appSession.directoryIdOfLevel2];
+            NSString* directoryPath = selectedDirectoryInfo.directoryPath;
+            [self fetchDataLocalBy:directoryPath and:nil];
             
         } failedBlock:^(NSError *error) {
             //
@@ -108,7 +119,17 @@
         }];
     }
     else{
-        [self fetchDataLocalBy:nil and:nil];
+        appSession.mappingDirectoryId = AppSetting(APP_SETTING_MAPPING_DIRECTORY_ID_KEY);
+        appSession.directoryIdOfLevel2 = AppSetting(APP_SETTING_DIRECTORY_ID_OF_LEVEL2_KEY);
+        appSession.directoryIdOfLevel3 = AppSetting(APP_SETTING_DIRECTORY_ID_OF_LEVEL3_KEY);
+        appSession.isSE = AppSettingBool(APP_SETTING_IS_SE_KEY);
+        appSession.contactProperty = AppSetting(APP_SETTING_CONTACT_PROPERTY_KEY);
+        //DebugLog(@"mappingDirectoryId:%@",appSession.mappingDirectoryId);
+        //DebugLog(@"isSE:%d",appSession.isSE);
+        
+        CDirectoryInfo *selectedDirectoryInfo = [CDirectoryInfo loadAsStaff:appSession.directoryIdOfLevel2];
+        NSString* directoryPath = selectedDirectoryInfo.directoryPath;
+        [self fetchDataLocalBy:directoryPath and:nil];
     }
 }
 
@@ -225,6 +246,15 @@
         */
         [contactSquare addTarget:self action:@selector(clickContact:) forControlEvents:UIControlEventTouchUpInside];
 
+        UILongPressGestureRecognizer *longPress =
+        [[UILongPressGestureRecognizer alloc] initWithTarget:self
+                                                      action:@selector(longPressedContact:)];
+        //代理
+        longPress.delegate = self;
+        longPress.minimumPressDuration = 1.0;
+        //将长按手势添加到需要实现长按操作的视图里
+        [contactSquare addGestureRecognizer:longPress];
+        
         [parentView addSubview:contactSquare];
         [contactSquare release];
         //[scrollView sendSubviewToBack:rectangle];
@@ -244,6 +274,7 @@
 
 #pragma mark - data 
 - (void)fetchDataLocalBy:(NSString*) directoryPath and:(NSString*) keyword{
+    _arrSelecedContacts = [[NSMutableArray alloc] init];
     self.arrContacts = [CContactInfo listContactByDirectoryPath:directoryPath andKeyword:keyword];
     if(!isSynced){
         self.asbCtl = [[[ActionSideBarController alloc] init] autorelease];
@@ -251,6 +282,7 @@
         [self.asbCtl doSyncFirst];
     }
     [myTableView reloadData];
+    //DebugLog(@"total:%d,row one page:%d",[arrContacts count],kNumContactsPerLoad);
 }
 
 #pragma mark - UITableView delegate 
@@ -275,9 +307,10 @@ static NSString *aCell=@"myCell";
         //cell.contentView.backgroundColor = [UIColor clearColor];
         cell.backgroundColor = [UIColor clearColor];
     }
-    
+    long pageNumMax = [self.arrContacts count] < kNumContactsPerLoad*(indexPath.row+1)? ([self.arrContacts count]-kNumContactsPerLoad*(indexPath.row)):20;
+    //DebugLog(@"pageNumMax:%d in row:%d",pageNumMax,indexPath.row);
     [[cell.contentView subviews] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        if ([self.arrContacts count]>0 && idx<[self.arrContacts count]) {
+        if ([self.arrContacts count]>0 && idx<pageNumMax) {
             ((UIView*)obj).backgroundColor = kSquareColor;
             CContactInfo *dataItem = [arrContacts objectAtIndex:kNumContactsPerLoad*(indexPath.row)+idx];
             ((UILabel*)[[(UIView*)obj subviews] objectAtIndex:1]).text = dataItem.contactName;
@@ -297,6 +330,40 @@ static NSString *aCell=@"myCell";
 }
 
 #pragma mark Actions
+//长按事件的实现方法
+- (void) longPressedContact:(UILongPressGestureRecognizer *)gestureRecognizer {
+    
+    if (gestureRecognizer.state ==
+        UIGestureRecognizerStateBegan) {
+        UIButton *btn = (UIButton*)gestureRecognizer.view;
+        btn.backgroundColor = [UIColor redColor];
+        UITableViewCell *cell = (UITableViewCell*)[btn superviewWithClass:[UITableViewCell class]];
+        NSIndexPath *indexPath = [myTableView indexPathForCell:cell];
+        CContactInfo *dataItem = [arrContacts objectAtIndex:kNumContactsPerLoad*(indexPath.row)+btn.tag];
+        if([_arrSelecedContacts containsObject: dataItem.contactId]){
+            btn.backgroundColor = kSquareColor;
+            [_arrSelecedContacts removeObject:dataItem.contactId];
+        }
+        else{
+            btn.backgroundColor = [UIColor redColor];
+            [_arrSelecedContacts addObject:dataItem.contactId];
+        }
+        
+        //if(_arrSelecedContacts conta
+        //NSLog(@"UIGestureRecognizerStateBegan");
+    }
+    if (gestureRecognizer.state ==
+        UIGestureRecognizerStateChanged) {
+        //NSLog(@"UIGestureRecognizerStateChanged");
+    }
+ 
+    if (gestureRecognizer.state == UIGestureRecognizerStateEnded) {
+        DebugLog(@"_arrSelecedContacts:%@",_arrSelecedContacts);
+    }
+    
+}
+
+
 - (void) clickContact:(id)sender {
     UIButton *btn = sender;
     UITableViewCell *cell = (UITableViewCell*)[btn superviewWithClass:[UITableViewCell class]];
@@ -305,20 +372,41 @@ static NSString *aCell=@"myCell";
     clickRow = indexPath.row;
     clickIndexAtRow = btn.tag;
     
+    
     CGPoint point = btn.center;
     //DebugLog(@"%@",NSStringFromCGPoint(point));
     NSInteger numberOfOptions = 9;
-    NSArray *items = @[
-                       [RNGridMenuItem emptyItem],
-                       [[[RNGridMenuItem alloc] initWithImage: MF_PngOfDefaultSkin(@"phone.png") title:@"打电话"] autorelease],
-                       [RNGridMenuItem emptyItem],
-                       [[[RNGridMenuItem alloc] initWithImage: MF_PngOfDefaultSkin(@"message.png")title:@"发短信"] autorelease],
-                       [[[RNGridMenuItem alloc] initWithImage: MF_PngOfDefaultSkin(@"person.png")title:@"详情"] autorelease],
-                       [[[RNGridMenuItem alloc] initWithImage: MF_PngOfDefaultSkin(@"mail.png") title:@"发邮件"] autorelease],
-                       [RNGridMenuItem emptyItem],
-                       [[[RNGridMenuItem alloc] initWithImage: MF_PngOfDefaultSkin(@"star.png") title:@"本地通讯录"] autorelease],
-                       [RNGridMenuItem emptyItem]
-                       ];
+    
+    NSArray *items = nil;
+    
+    if([_arrSelecedContacts count]>0){
+        items = @[
+                  [RNGridMenuItem emptyItem],
+                  [RNGridMenuItem emptyItem],
+                  [RNGridMenuItem emptyItem],
+                  [[[RNGridMenuItem alloc] initWithImage: MF_PngOfDefaultSkin(@"message.png")title:@"发短信"] autorelease],
+                  [RNGridMenuItem emptyItem],
+                  [[[RNGridMenuItem alloc] initWithImage: MF_PngOfDefaultSkin(@"mail.png") title:@"发邮件"] autorelease],
+                  [RNGridMenuItem emptyItem],
+                  [RNGridMenuItem emptyItem],
+                  [RNGridMenuItem emptyItem]
+                  ];
+
+    }
+    else{
+        items = @[
+               [RNGridMenuItem emptyItem],
+               [[[RNGridMenuItem alloc] initWithImage: MF_PngOfDefaultSkin(@"phone.png") title:@"打电话"] autorelease],
+               [RNGridMenuItem emptyItem],
+               [[[RNGridMenuItem alloc] initWithImage: MF_PngOfDefaultSkin(@"message.png")title:@"发短信"] autorelease],
+               [[[RNGridMenuItem alloc] initWithImage: MF_PngOfDefaultSkin(@"person.png")title:@"详情"] autorelease],
+               [[[RNGridMenuItem alloc] initWithImage: MF_PngOfDefaultSkin(@"mail.png") title:@"发邮件"] autorelease],
+               [RNGridMenuItem emptyItem],
+               [[[RNGridMenuItem alloc] initWithImage: MF_PngOfDefaultSkin(@"star.png") title:@"本地通讯录"] autorelease],
+               [RNGridMenuItem emptyItem]
+               ];
+    }
+    
     
     RNGridMenu *av = [[[RNGridMenu alloc] initWithItems:[items subarrayWithRange:NSMakeRange(0, numberOfOptions)]] autorelease];
     av.delegate = self;
@@ -464,11 +552,27 @@ static NSString *aCell=@"myCell";
 
 - (void)gridMenu:(RNGridMenu *)gridMenu willDismissWithSelectedItem:(RNGridMenuItem *)item atIndex:(NSInteger)itemIndex {
     CContactInfo *dataItem = [arrContacts objectAtIndex:kNumContactsPerLoad*(clickRow)+clickIndexAtRow];
-    DebugLog(@"%d",itemIndex);
+    DebugLog(@"%ld",(long)itemIndex);
     
     if(itemIndex == 1 || itemIndex == 3){
-        //打电话 
-        NSArray *joined = JOINARR4(mt_Tel(dataItem.dTel),mt_phone_short(dataItem.dTelShort),mt_Tel(dataItem.hTel),mt_mobile(dataItem.mobile),mt_phone_short(dataItem.mobileShort));
+        //打电话
+        NSArray *joined = nil;
+        if(itemIndex == 1){
+            joined =  JOINARR4(mt_Tel(dataItem.dTel),mt_phone_short(dataItem.dTelShort),mt_Tel(dataItem.hTel),mt_mobile(dataItem.mobile),mt_phone_short(dataItem.mobileShort));
+        }
+        else{
+            if([_arrSelecedContacts count]>0){
+                NSMutableArray *tempMobile = [NSMutableArray array];
+                [_arrSelecedContacts each:^(id sender) {
+                    [tempMobile addObjectsFromArray:mt_mobile(((CContactInfo*)[[CContactInfo loadByContactId:sender] firstObject]).mobile)];
+                }];
+                joined = tempMobile;
+            }
+            else{
+                joined = mt_mobile(dataItem.mobile);
+            }
+        }
+        
         /*
         DebugLog(@"dTel with item:%@", dTels);
         DebugLog(@"dTelShort with item:%@", dTelShort);
@@ -482,26 +586,25 @@ static NSString *aCell=@"myCell";
                 call([joined firstObject]);
             }
             else{
-                sms([joined firstObject],self);
+                sms(joined,self);
             }
         }
         else if([joined count] >1){
-            NSString *sheetTitle = itemIndex == 1 ? @"请选择一个号码拨号":@"请选择一个号码发送短信";
-            UIActionSheet *phoneSheet = [UIActionSheet sheetWithTitle:sheetTitle];
             
-            [joined each:^(id sender) {
-                NSString *phoneNo = sender;
-                [phoneSheet addButtonWithTitle:phoneNo handler:^void() {
-                    if(itemIndex==1){
+            if(itemIndex==1){
+                UIActionSheet *phoneSheet = [UIActionSheet sheetWithTitle:@"请选择一个号码拨号"];
+                [joined each:^(id sender) {
+                    NSString *phoneNo = sender;
+                    [phoneSheet addButtonWithTitle:phoneNo handler:^void() {
                         call(phoneNo);
-                    }
-                    else{
-                        sms(phoneNo,self);
-                    }
+                    }];
                 }];
-            }];
-            [phoneSheet setCancelButtonWithTitle:@"取消" handler:^void() {}];
-            [phoneSheet showInView:self.view];
+                [phoneSheet setCancelButtonWithTitle:@"取消" handler:^void() {}];
+                [phoneSheet showInView:self.view];
+            }
+            else{
+                sms(joined,self);
+            }
         }
         else{
             ShowError(@"没有找到任何号码");
@@ -524,7 +627,17 @@ static NSString *aCell=@"myCell";
         
     }
     else if(itemIndex == 5){
-        NSArray *mails = mt_mail(dataItem.eMail);
+        NSArray *mails = nil;
+        if([_arrSelecedContacts count]>0){
+            NSMutableArray *tempMail = [NSMutableArray array];
+            [_arrSelecedContacts each:^(id sender) {
+                [tempMail addObjectsFromArray:mt_mobile(((CContactInfo*)[[CContactInfo loadByContactId:sender] firstObject]).eMail)];
+            }];
+            mails = tempMail;
+        }
+        else{
+            mails =  mt_mail(dataItem.eMail);
+        }
         if([mails count] > 0){
             mail(mails,self);
         }

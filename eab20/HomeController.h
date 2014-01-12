@@ -12,7 +12,8 @@
 #import <AddressBookUI/AddressBookUI.h>
 
 @interface HomeController : AppBaseController<UIScrollViewDelegate,UITableViewDataSource, UITableViewDelegate,MWFSlideNavigationViewControllerDelegate, MWFSlideNavigationViewControllerDataSource,RNGridMenuDelegate,
-    DirectorySideBarDelegate,ActionSideBarDelegate,CInputAssistViewDelgate,ABPeoplePickerNavigationControllerDelegate>
+    DirectorySideBarDelegate,ActionSideBarDelegate,CInputAssistViewDelgate,ABPeoplePickerNavigationControllerDelegate,
+    UIGestureRecognizerDelegate>
 
 
 @property (nonatomic, retain) DirectorySideBarController * dsbCtl;

@@ -28,6 +28,7 @@
         <attribute name="directoryId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="directoryName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="directoryPath" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="dPK" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="orderNo" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="parentId" optional="YES" attributeType="String" syncable="YES"/>
     </entity>

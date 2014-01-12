@@ -14,6 +14,11 @@
 #define APP_SETTING_ACTIVIATED_MOBILE_KEY @"activiated_mobile"
 #define APP_SETTING_ACTIVIATED_CONTACT_ID_KEY @"activiated_contact_id"
 #define APP_SETTING_ACTIVIATED_CONTACT_NAME_KEY @"activiated_contact_name"
+#define APP_SETTING_MAPPING_DIRECTORY_ID_KEY @"mapping_directory_id"
+#define APP_SETTING_DIRECTORY_ID_OF_LEVEL2_KEY @"directory_id_of_level2"
+#define APP_SETTING_DIRECTORY_ID_OF_LEVEL3_KEY @"directory_id_of_level3"
+#define APP_SETTING_IS_SE_KEY @"is_SE"
+#define APP_SETTING_CONTACT_PROPERTY_KEY @"contact_property"
 
 #define APP_SETTING_AUTH_BASE_URL_KEY @"auth_base_url"
 #define APP_SETTING_AUTHENENTICATION_INTERFACE_TYPE_KEY @"authentication_interface_type"

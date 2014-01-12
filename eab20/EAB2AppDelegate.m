@@ -88,12 +88,12 @@
     
     //认证地址
     if (![defaults objectForKey:APP_SETTING_ACTIVIATE_BASE_URL_KEY]) {
-        [NSUserDefaults setString:@"42.120.6.22:8889"  forKey:APP_SETTING_ACTIVIATE_BASE_URL_KEY];
+        [NSUserDefaults setString:@"42.120.6.22:8891"  forKey:APP_SETTING_ACTIVIATE_BASE_URL_KEY];
     }
     
     //认证地址
     if (![defaults objectForKey:APP_SETTING_AUTH_BASE_URL_KEY]) {
-        [NSUserDefaults setString:@"42.120.6.22:8889"  forKey:APP_SETTING_AUTH_BASE_URL_KEY];
+        [NSUserDefaults setString:@"42.120.6.22:8891"  forKey:APP_SETTING_AUTH_BASE_URL_KEY];
     }
     
     //认证类型

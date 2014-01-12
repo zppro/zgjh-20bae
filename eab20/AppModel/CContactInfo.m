@@ -106,6 +106,12 @@
     return [[CContactInfo listContactByDirectoryPath:directoryPath andKeyword:nil] count];
 }
 
++ (NSArray *) loadByContactId:(NSString*) contactId{
+    DKPredicateBuilder *builder = [[[DKPredicateBuilder alloc] init] autorelease];
+    [builder where:@"contactId" startsWith:contactId];
+    return [CContactInfo fetchWithPredicateFormat:builder.compoundPredicate.predicateFormat];
+}
+
 + (BOOL)updateWithData:(NSArray *)data ByType:(UpdateSourceType) type{
     DKPredicateBuilder *builder = [[[DKPredicateBuilder alloc] init] autorelease];
     [builder where:@"updateSourceType" equals:NI(type)];

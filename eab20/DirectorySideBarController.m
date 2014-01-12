@@ -15,6 +15,7 @@
 @property (retain, nonatomic) id expanded;
 @property (retain, nonatomic) RATreeView *treeView;
 @property (retain, nonatomic) NSMutableDictionary *countOfContactForDirectoryPath;
+@property (retain, nonatomic) CDirectoryInfo *selectedDirectoryInfo;
 @end
 
 @implementation DirectorySideBarController
@@ -22,12 +23,14 @@
 @synthesize expanded;
 @synthesize treeView = _treeView;
 @synthesize countOfContactForDirectoryPath = _countOfContactForDirectoryPath;
+@synthesize selectedDirectoryInfo;
 
 - (void)dealloc {
     [_directoryInfos release];
     self.expanded = nil;
     [_treeView release];
     [_countOfContactForDirectoryPath release];
+    self.selectedDirectoryInfo = nil;
     [super dealloc];
 }
 
@@ -71,15 +74,22 @@
 - (void)viewDidLoad{
     [super viewDidLoad];
     _directoryInfos = [CDirectoryInfo listDirectoryAsRoot];
+    
     [_treeView reloadData];
+    
 }
+
+- (void)viewWillAppear:(BOOL)animated{
+    
+}
+
 #pragma mark TreeView Delegate methods
 - (CGFloat)treeView:(RATreeView *)treeView heightForRowForItem:(id)item treeNodeInfo:(RATreeNodeInfo *)treeNodeInfo{
     return 40;
 }
 
 - (NSInteger)treeView:(RATreeView *)treeView indentationLevelForRowForItem:(id)item treeNodeInfo:(RATreeNodeInfo *)treeNodeInfo{
-    return 2 * treeNodeInfo.treeDepthLevel;
+    return 1 * treeNodeInfo.treeDepthLevel;
 }
 
 - (BOOL)treeView:(RATreeView *)treeView shouldExpandItem:(id)item treeNodeInfo:(RATreeNodeInfo *)treeNodeInfo{
@@ -109,6 +119,15 @@
         else{
             cell.imageView.image = MF_PngOfDefaultSkin(@"plus.png");
         }
+    }
+    
+    CDirectoryInfo *directoryInfo = item;
+    if(appSession.selectedDirectoryId == nil){
+        appSession.selectedDirectoryId = appSession.directoryIdOfLevel2;
+    }
+    self.selectedDirectoryInfo = [CDirectoryInfo loadAsStaff:appSession.selectedDirectoryId];
+    if([directoryInfo.directoryPath isEqualToString:selectedDirectoryInfo.directoryPath]){
+        cell.backgroundColor = [UIColor blueColor];
     }
 }
 
@@ -142,6 +161,19 @@
 
 - (void)treeView:(RATreeView *)treeView didSelectRowForItem:(id)item treeNodeInfo:(RATreeNodeInfo *)treeNodeInfo{
     //DebugLog(@"didSelect:%@",((CDirectoryInfo*)item).directoryName);
+    UITableViewCell * selectedCell = [treeView cellForItem:self.selectedDirectoryInfo];
+    if(selectedCell != nil){
+        selectedCell.backgroundColor = [UIColor clearColor];
+    }
+    
+    self.selectedDirectoryInfo = item;
+    appSession.selectedDirectoryId = self.selectedDirectoryInfo.directoryId;
+    
+    UITableViewCell * cell = [treeView cellForItem:item];
+    if(cell != nil){
+        cell.backgroundColor = [UIColor blueColor];
+    }
+    
     if(self.delegate != nil){
         [self.delegate filter:item and:NO];
     }
@@ -186,7 +218,17 @@
         return [_directoryInfos count];
     }
     CDirectoryInfo *directoryInfo = item;
+    
     return [directoryInfo.children count];
+    
+    /*
+    if([directoryInfo.computeLevels intValue]>3){
+        return 0;
+    }
+    else{
+        return [directoryInfo.children count];
+    }
+    */
 }
 
 - (id)treeView:(RATreeView *)treeView child:(NSInteger)index ofItem:(id)item{

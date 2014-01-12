@@ -9,7 +9,7 @@
 #ifndef SmartLife_AppMacro_h
 #define SmartLife_AppMacro_h
 
-#define debugSite @"http://192.168.1.101"
+#define debugSite @"http://192.168.1.7"
 
 #define baseURL  @"http://www.lifeblue.com.cn/WebService/Default.ashx"
 #define baseURL2 @"http://www.lifeblue.com.cn/WebService/Upload.ashx"

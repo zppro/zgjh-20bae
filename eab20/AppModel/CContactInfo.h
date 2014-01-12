@@ -42,6 +42,7 @@ typedef enum {
 
 + (NSArray *)listContactByDirectoryPath:(NSString*) directoryPath andKeyword:(NSString*) keyword;
 + (NSUInteger)countContactByDirectoryPath:(NSString*) directoryPath;
++ (NSArray *) loadByContactId:(NSString*) contactId;
 + (BOOL)updateWithData:(NSArray *)data ByType:(UpdateSourceType) type;
 
 @end

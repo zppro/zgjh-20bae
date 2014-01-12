@@ -180,88 +180,77 @@ static NSString *aCell=@"myCell";
 
 - (void) doSync:(id) sender{
     if(isActiviated && isAuthorized){
-
-        if(self.delegate != nil){
-            [(id)_delegate performSelector:@selector(beginSync:) withObject:@"同步机构目录..."];
-        }
-        //dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
         
-        //dispatch_get_main_queue()
+        NSDictionary *head = [NSDictionary dictionaryWithObjectsAndKeys:appSession.token,@"Token",invokeToAppId,@"ApplicationIdTo",appSession.du,@"DU",appSession.sdn,@"SDN",nil];
+        HttpAppRequest *req = buildReq2(head);
+        
+        if(self.delegate != nil){
+            [(id)_delegate performSelector:@selector(beginSync:) withObject:@"同步自身信息..."];
+        }
         dispatch_async(dispatch_get_main_queue(), ^{
-            NSDictionary *head = [NSDictionary dictionaryWithObjectsAndKeys:appSession.token,@"Token",invokeToAppId,@"ApplicationIdTo",appSession.du,@"DU",appSession.sdn,@"SDN",nil];
-            HttpAppRequest *req = buildReq2(head);
-            [HttpAppAsynchronous httpGetWithUrl:[appSession getBizUrl:BIT_SyncDirectory] req:req sucessBlock:^(id result) {
-                if([CDirectoryInfo updateAll:(NSArray*)((HttpAppResponse*)result).rows]){
-                    /** 读取联系人(基础) start **/
-                    if(self.delegate != nil){
-                        [(id)_delegate performSelector:@selector(updateSync:) withObject:@"同步联系人(基础)..."];
-                    }
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        
-                        [HttpAppAsynchronous httpGetWithUrl:[appSession getBizUrl:BIT_SyncContactBySelf] req:req sucessBlock:^(id result) {
-                            
-                            if([CContactInfo updateWithData:(NSArray*)((HttpAppResponse*)result).rows ByType:UpdateSourceType_BySelf]){
-                                
-                                /** 读取联系人(部门条线) start **/
-                                if(self.delegate != nil){
-                                    [(id)_delegate performSelector:@selector(updateSync:) withObject:@"同步联系人(部门条线)..."];
-                                }
-                                dispatch_async(dispatch_get_main_queue(), ^{
-                                    [HttpAppAsynchronous httpGetWithUrl:[appSession getBizUrl:BIT_SyncContactByDLine] req:req sucessBlock:^(id result) {
-                                        
-                                        if([CContactInfo updateWithData:(NSArray*)((HttpAppResponse*)result).rows ByType:UpdateSourceType_ByDLine]){
-                                            
-                                            /** 读取联系人(高管条线) start **/
-                                            if(self.delegate != nil){
-                                                [(id)_delegate performSelector:@selector(updateSync:) withObject:@"同步联系人(高管条线)..."];
-                                            }
-                                            dispatch_async(dispatch_get_main_queue(), ^{
-                                                [HttpAppAsynchronous httpGetWithUrl:[appSession getBizUrl:BIT_SyncContactBySELine] req:req sucessBlock:^(id result) {
-                                                    [CContactInfo updateWithData:(NSArray*)((HttpAppResponse*)result).rows ByType:UpdateSourceType_BySELine];
-                                                    if(self.delegate != nil){
-                                                        [(id)_delegate performSelector:@selector(updateSync:) withObject:@"同步成功"];
-                                                    }
-                                                } failedBlock:^(NSError *error) {
-                                                    //
-                                                    DebugLog(@"%@",error);
-                                                } completionBlock:^{
-                                                    
-                                                    if(self.delegate != nil){
-                                                        [(id)_delegate performSelector:@selector(endSync)];
-                                                    }
-                                                }];
-                                            });
-                                            /** 读取联系人(高管条线) end **/
-                                        }
-                                        
-                                    } failedBlock:^(NSError *error) {
-                                        //
-                                        if(self.delegate != nil){
-                                            [(id)_delegate performSelector:@selector(endSync)];
-                                        }
-                                        DebugLog(@"%@",error);
-                                    } completionBlock:^{
-                                        
-                                    }];
-                                    /** 读取联系人(部门条线) end **/
-                                });
-                            }
-                            
-                        } failedBlock:^(NSError *error) {
-                            //
-                            
-                            if(self.delegate != nil){
-                                [(id)_delegate performSelector:@selector(endSync)];
-                            }
-                            DebugLog(@"%@",error);
-                        } completionBlock:^{
-                            
-                        }];
-                        /** 读取联系人(基础) end **/
-                    });
+            [HttpAppAsynchronous httpGetWithUrl:[appSession getBizUrl:BIT_SyncSelfInfo] req:req sucessBlock:^(id result) {
+                
+                DebugLog(@"IsSE:%@",[((HttpAppResponse*)result).ret objectForKey:@"IsSE"]);
+                appSession.mappingDirectoryId = [((HttpAppResponse*)result).ret objectForKey:@"MappingDirectoryId"];
+                appSession.directoryIdOfLevel2 = [((HttpAppResponse*)result).ret objectForKey:@"DirectoryIdOfLevel2"];
+                appSession.directoryIdOfLevel3 = [((HttpAppResponse*)result).ret objectForKey:@"DirectoryIdOfLevel3"];
+                appSession.isSE = [[((HttpAppResponse*)result).ret objectForKey:@"IsSE"] boolValue];
+                appSession.contactProperty = [((HttpAppResponse*)result).ret objectForKey:@"ContactProperty"];
+                
+                savS(APP_SETTING_MAPPING_DIRECTORY_ID_KEY, appSession.mappingDirectoryId);
+                savS(APP_SETTING_DIRECTORY_ID_OF_LEVEL2_KEY, appSession.directoryIdOfLevel2);
+                savS(APP_SETTING_DIRECTORY_ID_OF_LEVEL3_KEY, appSession.directoryIdOfLevel3);
+                savB(APP_SETTING_IS_SE_KEY, appSession.isSE);
+                savS(APP_SETTING_CONTACT_PROPERTY_KEY, appSession.contactProperty);
+                
+                if(self.delegate != nil){
+                    [(id)_delegate performSelector:@selector(beginSync:) withObject:@"同步机构目录..."];
                 }
+                //dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
+                
+                //dispatch_get_main_queue()
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [HttpAppAsynchronous httpGetWithUrl:[appSession getBizUrl:BIT_SyncDirectory] req:req sucessBlock:^(id result) {
+                        if([CDirectoryInfo updateAll:(NSArray*)((HttpAppResponse*)result).rows]){
+                            /** 读取联系人(基础) start **/
+                            if(self.delegate != nil){
+                                [(id)_delegate performSelector:@selector(updateSync:) withObject:@"同步联系人..."];
+                            }
+                            dispatch_async(dispatch_get_main_queue(), ^{
+                                
+                                [HttpAppAsynchronous httpGetWithUrl:[appSession getBizUrl:BIT_SyncContact] req:req sucessBlock:^(id result) {
+                                    
+                                    if([CContactInfo updateWithData:(NSArray*)((HttpAppResponse*)result).rows ByType:UpdateSourceType_BySelf]){
+                                        if(self.delegate != nil){
+                                            [(id)_delegate performSelector:@selector(updateSync:) withObject:@"同步成功"];
+                                        }
+                                    }
+                                    
+                                } failedBlock:^(NSError *error) {
+                                    //
+                                    DebugLog(@"%@",error);
+                                } completionBlock:^{
+                                    if(self.delegate != nil){
+                                        [(id)_delegate performSelector:@selector(endSync)];
+                                    }
+                                }];
+                                /** 读取联系人(基础) end **/
+                            });
+                        }
+                    } failedBlock:^(NSError *error) {
+                        //
+                        if(self.delegate != nil){
+                            [(id)_delegate performSelector:@selector(endSync)];
+                        }
+                        DebugLog(@"%@",error);
+                    } completionBlock:^{
+                        
+                    }];
+                    /** 读取机构目录 end **/
+                    
+                });
+                
             } failedBlock:^(NSError *error) {
-                //
                 if(self.delegate != nil){
                     [(id)_delegate performSelector:@selector(endSync)];
                 }
@@ -269,7 +258,146 @@ static NSString *aCell=@"myCell";
             } completionBlock:^{
                 
             }];
-        }); 
+            /** 读取当前联系人信息 end **/
+        });
+        
+    }
+}
+
+- (void) doSync2:(id) sender{
+    if(isActiviated && isAuthorized){
+
+        NSDictionary *head = [NSDictionary dictionaryWithObjectsAndKeys:appSession.token,@"Token",invokeToAppId,@"ApplicationIdTo",appSession.du,@"DU",appSession.sdn,@"SDN",nil];
+        HttpAppRequest *req = buildReq2(head);
+        
+        if(self.delegate != nil){
+            [(id)_delegate performSelector:@selector(beginSync:) withObject:@"同步自身信息..."];
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [HttpAppAsynchronous httpGetWithUrl:[appSession getBizUrl:BIT_SyncSelfInfo] req:req sucessBlock:^(id result) {
+
+                DebugLog(@"IsSE:%@",[((HttpAppResponse*)result).ret objectForKey:@"IsSE"]);
+                appSession.mappingDirectoryId = [((HttpAppResponse*)result).ret objectForKey:@"MappingDirectoryId"];
+                appSession.isSE = [[((HttpAppResponse*)result).ret objectForKey:@"IsSE"] boolValue];
+                
+                savS(APP_SETTING_MAPPING_DIRECTORY_ID_KEY, appSession.mappingDirectoryId);
+                savB(APP_SETTING_IS_SE_KEY, appSession.isSE);
+
+                if(self.delegate != nil){
+                    [(id)_delegate performSelector:@selector(beginSync:) withObject:@"同步机构目录..."];
+                }
+                //dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
+                
+                //dispatch_get_main_queue()
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [HttpAppAsynchronous httpGetWithUrl:[appSession getBizUrl:BIT_SyncDirectory] req:req sucessBlock:^(id result) {
+                        if([CDirectoryInfo updateAll:(NSArray*)((HttpAppResponse*)result).rows]){
+                            /** 读取联系人(基础) start **/
+                            if(self.delegate != nil){
+                                [(id)_delegate performSelector:@selector(updateSync:) withObject:@"同步联系人(基础)..."];
+                            }
+                            dispatch_async(dispatch_get_main_queue(), ^{
+                                
+                                [HttpAppAsynchronous httpGetWithUrl:[appSession getBizUrl:BIT_SyncContactBySelf] req:req sucessBlock:^(id result) {
+                                    
+                                    if([CContactInfo updateWithData:(NSArray*)((HttpAppResponse*)result).rows ByType:UpdateSourceType_BySelf]){
+                                        
+                                        /** 读取联系人(部门条线) start **/
+                                        if(self.delegate != nil){
+                                            [(id)_delegate performSelector:@selector(updateSync:) withObject:@"同步联系人(部门条线)..."];
+                                        }
+                                        dispatch_async(dispatch_get_main_queue(), ^{
+                                            [HttpAppAsynchronous httpGetWithUrl:[appSession getBizUrl:BIT_SyncContactByDLine] req:req sucessBlock:^(id result) {
+                                                
+                                                if([CContactInfo updateWithData:(NSArray*)((HttpAppResponse*)result).rows ByType:UpdateSourceType_ByDLine]){
+                                                    if(appSession.isSE){
+                                                        /** 读取联系人(高管条线) start **/
+                                                        if(self.delegate != nil){
+                                                            [(id)_delegate performSelector:@selector(updateSync:) withObject:@"同步联系人(高管条线)..."];
+                                                        }
+                                                        dispatch_async(dispatch_get_main_queue(), ^{
+                                                            [HttpAppAsynchronous httpGetWithUrl:[appSession getBizUrl:BIT_SyncContactBySELine] req:req sucessBlock:^(id result) {
+                                                                if(((HttpAppResponse*)result).rows !=nil){
+                                                                    [CContactInfo updateWithData:(NSArray*)((HttpAppResponse*)result).rows ByType:UpdateSourceType_BySELine];
+                                                                    if(self.delegate != nil){
+                                                                        [(id)_delegate performSelector:@selector(updateSync:) withObject:@"同步成功"];
+                                                                    }
+                                                                }
+                                                                else{
+                                                                    if(self.delegate != nil){
+                                                                        [(id)_delegate performSelector:@selector(updateSync:) withObject:@"同步成功"];
+                                                                    }
+                                                                }
+                                                                
+                                                            } failedBlock:^(NSError *error) {
+                                                                //
+                                                                DebugLog(@"%@",error);
+                                                            } completionBlock:^{
+                                                                
+                                                                if(self.delegate != nil){
+                                                                    [(id)_delegate performSelector:@selector(endSync)];
+                                                                }
+                                                            }];
+                                                        });
+                                                        /** 读取联系人(高管条线) end **/
+                                                    }
+                                                    else{
+                                                        if(self.delegate != nil){
+                                                            [(id)_delegate performSelector:@selector(endSync)];
+                                                        }
+                                                    }
+                                                }
+                                                
+                                            } failedBlock:^(NSError *error) {
+                                                //
+                                                if(self.delegate != nil){
+                                                    [(id)_delegate performSelector:@selector(endSync)];
+                                                }
+                                                DebugLog(@"%@",error);
+                                            } completionBlock:^{
+                                                
+                                            }];
+                                            /** 读取联系人(部门条线) end **/
+                                        });
+                                    }
+                                    
+                                } failedBlock:^(NSError *error) {
+                                    //
+                                    
+                                    if(self.delegate != nil){
+                                        [(id)_delegate performSelector:@selector(endSync)];
+                                    }
+                                    DebugLog(@"%@",error);
+                                } completionBlock:^{
+                                    
+                                }];
+                                /** 读取联系人(基础) end **/
+                            });
+                        }
+                    } failedBlock:^(NSError *error) {
+                        //
+                        if(self.delegate != nil){
+                            [(id)_delegate performSelector:@selector(endSync)];
+                        }
+                        DebugLog(@"%@",error);
+                    } completionBlock:^{
+                        
+                    }];
+                    /** 读取机构目录 end **/
+                    
+                }); 
+
+            } failedBlock:^(NSError *error) {
+                if(self.delegate != nil){
+                    [(id)_delegate performSelector:@selector(endSync)];
+                }
+                DebugLog(@"%@",error);
+            } completionBlock:^{
+                
+            }];
+            /** 读取当前联系人信息 end **/
+        });
+        
     }
 }
 

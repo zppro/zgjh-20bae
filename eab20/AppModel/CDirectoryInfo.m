@@ -10,7 +10,7 @@
 
 
 @implementation CDirectoryInfo
-
+@dynamic dPK;
 @dynamic directoryId;
 @dynamic directoryName;
 @dynamic directoryPath;
@@ -25,15 +25,16 @@
 }
 
 + (NSString*) localEntityKey{
-    return @"directoryId";
+    return @"dPK";
 }
 + (NSString*) dataSourceKey{
-    return @"DirectoryId";
+    return @"DPK";
 }
 
 - (NSDictionary *)elementToPropertMappings
 {
     return [NSDictionary dictionaryWithObjectsAndKeys:
+            @"dPK", @"DPK",
             @"directoryId", @"DirectoryId",
             @"directoryName", @"DirectoryName",
             @"directoryPath", @"DirectoryPath",
@@ -57,14 +58,32 @@
     return [CDirectoryInfo fetchWithSortBy:@"orderNo" ascending:YES predicateWithFormat:builder.compoundPredicate.predicateFormat];
 }
 
++ (CDirectoryInfo*) loadAsStaff:(NSString*) directoryId{
+    DKPredicateBuilder *builder = [[[DKPredicateBuilder alloc] init] autorelease];
+    [builder where:@"dPK" equals:JOIN(@"0-", directoryId)];
+    NSArray * temp = [CDirectoryInfo fetchWithPredicateFormat:builder.compoundPredicate.predicateFormat];
+    return [temp firstObject];
+    /*
+    if([temp count] ==1){
+        return [temp firstObject];
+    }
+    */
+}
+
 + (BOOL)updateAll:(NSArray *)data{
     return [CDirectoryInfo updateWithData:data EntityKey:[CDirectoryInfo localEntityKey] IEntityKey:[CDirectoryInfo dataSourceKey]];
 }
 
 - (NSArray*) children{
     if(_children == nil){
-        
-        _children = [CDirectoryInfo listDirectoryByLevels: [self.computeLevels intValue]+1 andParent:[self.directoryId uppercaseString]];
+        NSString *parentId = nil;
+        if([self.directoryId isEqualToString:@"DLine"] ||[self.directoryId isEqualToString:@"DLine"]){
+            parentId = self.directoryId;
+        }
+        else{
+            parentId = [self.directoryId uppercaseString];
+        }
+        _children = [CDirectoryInfo listDirectoryByLevels: [self.computeLevels intValue]+1 andParent:parentId];
     }
     return [_children retain];
 }
