@@ -14,6 +14,7 @@
 #define baseURL  @"http://www.lifeblue.com.cn/WebService/Default.ashx"
 #define baseURL2 @"http://www.lifeblue.com.cn/WebService/Upload.ashx"
 #define baseURL3 @"www.lifeblue.com.cn/WebService/Upload/CallService" 
+#define intranetSite @"42.120.6.22:8891" //@"42.120.6.22:8891" @"34.0.191.202:8888"
 #define appId @"MM101"
 #define invokeToAppId @"IP002"
 
@@ -22,6 +23,7 @@
 #define isSynced [AppSession whetherIsSynced]
 #define isDebug [AppSession whetherIsDebug]
 #define whichAIT [AppSession whichAuthenticationInterfaceType]
+#define isShowPortrait [AppSession whetherIsShowPortrait]
 
 #define authUrl(x) [appSession getAuthUrl:x]
 #define bizUrl(x,y) [appSession getBizUrl:x withAccessPoint:y]

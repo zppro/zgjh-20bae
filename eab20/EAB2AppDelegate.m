@@ -10,6 +10,7 @@
 #import "AppMacro.h"
 #import "HomeController.h"
 #import "TSInfiniteScrollViewController.h"
+#import "RootViewController.h"
 
 @implementation EAB2AppDelegate
 
@@ -25,7 +26,7 @@
 
     // Override point for customization after application launch.
     //self.window.backgroundColor = [UIColor blackColor];
-    
+    //RootViewController *homeController = [[[RootViewController alloc] init] autorelease];
     HomeController *homeController = [[[HomeController alloc] init] autorelease];
     MWFSlideNavigationViewController * slideNavCtl = [[MWFSlideNavigationViewController alloc] initWithRootViewController:homeController];
     slideNavCtl.panEnabled = YES;
@@ -88,12 +89,12 @@
     
     //认证地址
     if (![defaults objectForKey:APP_SETTING_ACTIVIATE_BASE_URL_KEY]) {
-        [NSUserDefaults setString:@"42.120.6.22:8891"  forKey:APP_SETTING_ACTIVIATE_BASE_URL_KEY];
+        [NSUserDefaults setString:intranetSite  forKey:APP_SETTING_ACTIVIATE_BASE_URL_KEY];
     }
     
     //认证地址
     if (![defaults objectForKey:APP_SETTING_AUTH_BASE_URL_KEY]) {
-        [NSUserDefaults setString:@"42.120.6.22:8891"  forKey:APP_SETTING_AUTH_BASE_URL_KEY];
+        [NSUserDefaults setString:intranetSite  forKey:APP_SETTING_AUTH_BASE_URL_KEY];
     }
     
     //认证类型
@@ -110,6 +111,12 @@
     if (![defaults objectForKey:APP_SETTING_IS_SYNCED_KEY]) {
         [NSUserDefaults setBool:FALSE forKey:APP_SETTING_IS_SYNCED_KEY];
     }
+    
+    //是否显示头像
+    if (![defaults objectForKey:APP_SETTING_IS_SHOW_PORTRAIT_KEY]) {
+        [NSUserDefaults setBool:FALSE forKey:APP_SETTING_IS_SHOW_PORTRAIT_KEY];
+    }
+    
     
     //设置版本
     [NSUserDefaults setString:[[NSBundle mainBundle] bundleVersion]  forKey:SETTING_DEPLOY_VERSION_KEY];

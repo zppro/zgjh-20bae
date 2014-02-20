@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AC0F82D7188812C30047DCF7 /* SelfInfoSubmitView.m in Sources */ = {isa = PBXBuildFile; fileRef = AC0F82D6188812C30047DCF7 /* SelfInfoSubmitView.m */; };
+		AC0F83B9188823700047DCF7 /* libCBConfigurableTableView.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AC0F83B6188823200047DCF7 /* libCBConfigurableTableView.a */; };
+		AC0F83BE1888261D0047DCF7 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AC0F83BD1888261D0047DCF7 /* RootViewController.m */; };
 		AC395502185ECEBC00B87255 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = AC395501185ECEBC00B87255 /* Settings.bundle */; };
 		AC395505185ED70800B87255 /* ActiviateController.m in Sources */ = {isa = PBXBuildFile; fileRef = AC395504185ED70800B87255 /* ActiviateController.m */; };
 		AC395523185EF41200B87255 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = AC39551F185EF41200B87255 /* Default-568h@2x.png */; };
@@ -68,6 +71,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		AC0F83B5188823200047DCF7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AC0F83B1188823200047DCF7 /* ConfigurableTableView.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D2AAC07E0554694100DB518D;
+			remoteInfo = ConfigurableTableView;
+		};
+		AC0F83B7188823580047DCF7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AC0F83B1188823200047DCF7 /* ConfigurableTableView.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = D2AAC07D0554694100DB518D;
+			remoteInfo = ConfigurableTableView;
+		};
 		ACAD451418583BEA005ED3E9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = ACAD44E618583BEA005ED3E9 /* Project object */;
@@ -92,6 +109,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		AC0F82D5188812C30047DCF7 /* SelfInfoSubmitView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SelfInfoSubmitView.h; path = AppView/SelfInfoSubmitView.h; sourceTree = "<group>"; };
+		AC0F82D6188812C30047DCF7 /* SelfInfoSubmitView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SelfInfoSubmitView.m; path = AppView/SelfInfoSubmitView.m; sourceTree = "<group>"; };
+		AC0F83B1188823200047DCF7 /* ConfigurableTableView.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ConfigurableTableView.xcodeproj; path = ../CBConfigurableTableView/ConfigurableTableView.xcodeproj; sourceTree = "<group>"; };
+		AC0F83BC1888261D0047DCF7 /* RootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RootViewController.h; sourceTree = "<group>"; };
+		AC0F83BD1888261D0047DCF7 /* RootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RootViewController.m; sourceTree = "<group>"; };
 		AC395501185ECEBC00B87255 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		AC395503185ED70800B87255 /* ActiviateController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActiviateController.h; sourceTree = "<group>"; };
 		AC395504185ED70800B87255 /* ActiviateController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActiviateController.m; sourceTree = "<group>"; };
@@ -179,6 +201,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AC0F83B9188823700047DCF7 /* libCBConfigurableTableView.a in Frameworks */,
 				AC690340186C6C9A00B2EE86 /* MessageUI.framework in Frameworks */,
 				ACA606D9185AA79900523D4A /* Accelerate.framework in Frameworks */,
 				ACAD45481858413A005ED3E9 /* QuartzCore.framework in Frameworks */,
@@ -214,6 +237,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		AC0F83B2188823200047DCF7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AC0F83B6188823200047DCF7 /* libCBConfigurableTableView.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		AC39551D185EE75200B87255 /* LaunchImage */ = {
 			isa = PBXGroup;
 			children = (
@@ -245,6 +276,7 @@
 		ACAD44F018583BEA005ED3E9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				AC0F83B1188823200047DCF7 /* ConfigurableTableView.xcodeproj */,
 				ACAD452618583D40005ED3E9 /* core.xcodeproj */,
 				ACAD45501858428B005ED3E9 /* libxml2.dylib */,
 				ACAD454E18584283005ED3E9 /* libz.dylib */,
@@ -272,6 +304,8 @@
 		ACAD44F918583BEA005ED3E9 /* eab20 */ = {
 			isa = PBXGroup;
 			children = (
+				AC0F83BC1888261D0047DCF7 /* RootViewController.h */,
+				AC0F83BD1888261D0047DCF7 /* RootViewController.m */,
 				ACAD458D18596734005ED3E9 /* TSInfiniteScroll */,
 				ACAD458B18595831005ED3E9 /* AppView */,
 				ACAD4553185842DA005ED3E9 /* AppCore */,
@@ -383,6 +417,8 @@
 			children = (
 				ACEEA8D0187021A400AE5EF1 /* ContactDetailView.h */,
 				ACEEA8D1187021A400AE5EF1 /* ContactDetailView.m */,
+				AC0F82D5188812C30047DCF7 /* SelfInfoSubmitView.h */,
+				AC0F82D6188812C30047DCF7 /* SelfInfoSubmitView.m */,
 			);
 			name = AppView;
 			sourceTree = "<group>";
@@ -418,6 +454,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				AC0F83B8188823580047DCF7 /* PBXTargetDependency */,
 				ACAD452F18583DA7005ED3E9 /* PBXTargetDependency */,
 			);
 			name = eab20;
@@ -470,6 +507,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = AC0F83B2188823200047DCF7 /* Products */;
+					ProjectRef = AC0F83B1188823200047DCF7 /* ConfigurableTableView.xcodeproj */;
+				},
+				{
 					ProductGroup = ACAD452718583D40005ED3E9 /* Products */;
 					ProjectRef = ACAD452618583D40005ED3E9 /* core.xcodeproj */;
 				},
@@ -483,6 +524,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		AC0F83B6188823200047DCF7 /* libCBConfigurableTableView.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libCBConfigurableTableView.a;
+			remoteRef = AC0F83B5188823200047DCF7 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		ACAD452B18583D40005ED3E9 /* libcore.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -545,8 +593,10 @@
 				ACAD45991859675D005ED3E9 /* TSInfiniteScrollViewController.m in Sources */,
 				ACAD450418583BEA005ED3E9 /* EAB2AppDelegate.m in Sources */,
 				ACAD459C1859675D005ED3E9 /* UIScrollView+Paging.m in Sources */,
+				AC0F82D7188812C30047DCF7 /* SelfInfoSubmitView.m in Sources */,
 				ACAD455F1858433A005ED3E9 /* AppBaseController.m in Sources */,
 				AC39552B185FFACA00B87255 /* CContactInfo.m in Sources */,
+				AC0F83BE1888261D0047DCF7 /* RootViewController.m in Sources */,
 				ACAD45981859675D005ED3E9 /* TSInfiniteScrollItemViewController.m in Sources */,
 				ACAD45601858433A005ED3E9 /* AppRequestBuilder.m in Sources */,
 				ACAD450018583BEA005ED3E9 /* main.m in Sources */,
@@ -563,6 +613,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		AC0F83B8188823580047DCF7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ConfigurableTableView;
+			targetProxy = AC0F83B7188823580047DCF7 /* PBXContainerItemProxy */;
+		};
 		ACAD451518583BEA005ED3E9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = ACAD44ED18583BEA005ED3E9 /* eab20 */;
@@ -677,7 +732,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				USER_HEADER_SEARCH_PATHS = "../../com.zppro/core/**";
+				USER_HEADER_SEARCH_PATHS = "../../com.zppro/**";
 				VALID_ARCHS = "armv7 armv7s arm64";
 				WRAPPER_EXTENSION = app;
 			};
@@ -702,7 +757,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				USER_HEADER_SEARCH_PATHS = "../../com.zppro/core/**";
+				USER_HEADER_SEARCH_PATHS = "../../com.zppro/**";
 				VALID_ARCHS = "armv7 armv7s arm64";
 				WRAPPER_EXTENSION = app;
 			};

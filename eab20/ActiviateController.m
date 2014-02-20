@@ -92,6 +92,36 @@
 }
 
 - (void)doActiviate:(id)sender{
+    
+    if([self.mobileField.textField.text length] ==0){
+        [self showWaitViewWithTitle:@"请输入激活的手机号码" andCloseDelay:1.0];
+        return;
+    }
+    if(!v_phone(self.mobileField.textField.text)){
+        [self showWaitViewWithTitle:@"不是有效的手机号码" andCloseDelay:1.0];
+        return;
+    }
+    if(![self.mobileField.textField.text isEqualToString:self.mobileConfirmField.textField.text]){
+        [self showWaitViewWithTitle:@"两次输入的手机号码不一致" andCloseDelay:1.0];
+        return;
+    }
+    
+    DebugLog(@"activeUrl:%@",[appSession getActiviateUrl]);
+    if(![[UIDevice currentDevice] networkAvailable]){
+        [self showWaitViewWithTitle:@"无法连接到激活主机，请联系管理员" andCloseDelay:1.0];
+        return;
+    }
+    /*
+    if(![[UIDevice currentDevice] hostAvailable:@"34.0.191.202:8888"]){
+        [self showWaitViewWithTitle:@"无法连接到激活主机，请联系管理员" andCloseDelay:1.0];
+        return;
+    }
+    if(![[UIDevice currentDevice] checkServerAvailability:@"34.0.191.202:8888"]){
+        [self showWaitViewWithTitle:@"无法连接到激活主机，请联系管理员" andCloseDelay:1.0];
+        return;
+    }
+    */
+    
     [self.mobileField.textField resignFirstResponder];
     [self.mobileConfirmField.textField resignFirstResponder];
     [self showWaitViewWithTitle:@"激活中..."];

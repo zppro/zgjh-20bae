@@ -29,5 +29,7 @@
 
 #define APP_SETTING_IS_SYNCED_KEY @"is_synced"
 
+#define APP_SETTING_IS_SHOW_PORTRAIT_KEY @"is_show_portrait"
+
 #define APP_DISPLAY_NAME  @"中国建设银行浙江省分行通讯录"
 #endif

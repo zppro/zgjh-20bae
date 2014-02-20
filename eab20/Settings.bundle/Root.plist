@@ -28,6 +28,22 @@
 		</dict>
 		<dict>
 			<key>Title</key>
+			<string>显示设置</string>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+		</dict>
+		<dict>
+			<key>DefaultValue</key>
+			<false/>
+			<key>Key</key>
+			<string>is_show_portrait</string>
+			<key>Title</key>
+			<string>显示头像</string>
+			<key>Type</key>
+			<string>PSToggleSwitchSpecifier</string>
+		</dict>
+		<dict>
+			<key>Title</key>
 			<string>调试设置</string>
 			<key>Type</key>
 			<string>PSGroupSpecifier</string>

@@ -95,6 +95,9 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if(indexPath.row == 0){
+        return 60;
+    }
     return 30;
 }
 
@@ -106,7 +109,11 @@ static NSString *aCell=@"myCell";
     if (cell == nil) {
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
                                        reuseIdentifier:aCell] autorelease];
-        UIImageView *splitView = [[UIImageView alloc] initWithFrame:CGRectMake((myTableView.width-183.5)/2.f, 30-2, 183.5f, 2)];
+        int rowHeight = 30;
+        if(indexPath.row == 0){
+            rowHeight = 60;
+        }
+        UIImageView *splitView = [[UIImageView alloc] initWithFrame:CGRectMake((myTableView.width-183.5)/2.f, rowHeight-2, 183.5f, 2)];
         splitView.image = MF_PngOfDefaultSkin(@"split2.png");
         [cell addSubview:splitView];
         [splitView release];
@@ -127,13 +134,20 @@ static NSString *aCell=@"myCell";
         [cell addSubview:valueCellView];
         [valueCellView release];
         
+        
+        
         if(indexPath.row==0){
+            
             titleCellView.text = @"部门:";
             titleCellView.width = 40;
             valueCellView.text = MF_Replace(self.dataItem.directoryPath, @",", @"");
+            if(indexPath.row == 0){
+                valueCellView.numberOfLines = 3;
+                [valueCellView sizeToFit];
+            }
         }
         else if(indexPath.row==1){
-            titleCellView.text = @"门牌号:";
+            titleCellView.text = @"房间号:";
             titleCellView.width = 50;
             valueCellView.text = MF_Replace(self.dataItem.doorNo, @",", @"");
         }

@@ -57,13 +57,20 @@
     [self.view addSubview:headView];
     [headView release];
     
-    UILabel *headTitleView = [[UILabel alloc] initWithFrame:CGRectMake(0, 22.f, self.view.width, 40.0f)];
+    UILabel *headTitleView = [[UILabel alloc] initWithFrame:CGRectMake(10.f, 22.f, self.view.width-40.f, 40.0f)];
     headTitleView.textColor = MF_ColorFromRGB(16, 69, 144);
-    headTitleView.textAlignment = UITextAlignmentCenter;
-    headTitleView.font = [UIFont fontWithName:@"Helvetica-Bold" size:20];//[UIFont systemFontOfSize:16];//
+    headTitleView.textAlignment = UITextAlignmentLeft;
+    headTitleView.font = [UIFont fontWithName:@"Helvetica-Bold" size:18];//[UIFont systemFontOfSize:16];//
     headTitleView.text = APP_DISPLAY_NAME;
     [headView addSubview:headTitleView];
     [headTitleView release];
+    
+    UIButton *searchBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [searchBtn setFrame:CGRectMake(headTitleView.width,22.f, 40.f, 40.f)];
+    [searchBtn setImage:MF_PngOfDefaultSkin(@"search.png") forState:UIControlStateNormal];
+    [searchBtn addTarget:self action:@selector(doSearch:) forControlEvents:UIControlEventTouchUpInside];
+    [searchBtn setBackgroundColor:[UIColor clearColor]];
+    [headView addSubview:searchBtn];
     
     myTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 62.0f, self.view.width,self.view.height-62.0f)];
     myTableView.backgroundColor = MF_ColorFromRGB(16, 69, 144);
@@ -181,27 +188,37 @@
         contactSquare.layer.shadowPath = rectangleShadowPath;
         /**/
         
-        //UIImageView *iv = makeImageViewByFrame(CGRectMake((kSquareSideLength-48.f)/2, 4, 48.f, 48.f));
-        [contactSquare setImage:MF_PngOfDefaultSkin(@"head-portrait.png") forState:UIControlStateNormal];
-        //contactSquare.imageView.frame = CGRectMake((kSquareSideLength-48.f)/2, 4, 48.f, 48.f);
-        contactSquare.imageView.layer.borderWidth = 2;
-        contactSquare.imageView.layer.borderColor = [UIColor whiteColor].CGColor;
-        contactSquare.imageView.layer.cornerRadius = CGRectGetHeight(contactSquare.imageView.bounds) / 2;
-        contactSquare.imageView.clipsToBounds = YES;
-        contactSquare.backgroundColor = [UIColor clearColor];
         
-        //[contactSquare setTitle:@"联系人" forState:UIControlStateNormal];
-        //[contactSquare setTitleColor: [UIColor whiteColor] forState:UIControlStateNormal];
-        //contactSquare.titleLabel.font = [UIFont systemFontOfSize:10.0f];
         
-        UILabel *nameView = [[UILabel alloc] initWithFrame:CGRectMake(3, kSquareSideLength+2, kSquareSideLength-2*3, 12.0f)];
-        nameView.backgroundColor = [UIColor clearColor];
-        nameView.font = [UIFont systemFontOfSize:10.0f];
-        nameView.textAlignment = NSTextAlignmentCenter;
-        nameView.textColor = [UIColor whiteColor];
-        nameView.text=@"联系人";
-        [contactSquare addSubview:nameView];
-        [nameView release];
+        if(isShowPortrait){
+            //UIImageView *iv = makeImageViewByFrame(CGRectMake((kSquareSideLength-48.f)/2, 4, 48.f, 48.f));
+            [contactSquare setImage:MF_PngOfDefaultSkin(@"head-portrait.png") forState:UIControlStateNormal];
+            //contactSquare.imageView.frame = CGRectMake((kSquareSideLength-48.f)/2, 4, 48.f, 48.f);
+            contactSquare.imageView.layer.borderWidth = 2;
+            contactSquare.imageView.layer.borderColor = [UIColor whiteColor].CGColor;
+            contactSquare.imageView.layer.cornerRadius = CGRectGetHeight(contactSquare.imageView.bounds) / 2;
+            contactSquare.imageView.clipsToBounds = YES;
+            contactSquare.backgroundColor = [UIColor clearColor];
+            
+            //[contactSquare setTitle:@"联系人" forState:UIControlStateNormal];
+            //[contactSquare setTitleColor: [UIColor whiteColor] forState:UIControlStateNormal];
+            //contactSquare.titleLabel.font = [UIFont systemFontOfSize:10.0f];
+            
+            UILabel *nameView = [[UILabel alloc] initWithFrame:CGRectMake(3, kSquareSideLength+2, kSquareSideLength-2*3, 12.0f)];
+            nameView.backgroundColor = [UIColor clearColor];
+            nameView.font = [UIFont systemFontOfSize:10.0f];
+            nameView.textAlignment = NSTextAlignmentCenter;
+            nameView.textColor = [UIColor whiteColor];
+            nameView.text=@"联系人";
+            [contactSquare addSubview:nameView];
+            [nameView release];
+        }
+        else{
+            [contactSquare setTitle:@"联系人" forState:UIControlStateNormal];
+        }
+        
+        
+        
         
         /*
         UIImageView *iv = makeImageViewByFrame(CGRectMake((kSquareSideLength-48.f)/2, 4, 48.f, 48.f));
@@ -309,15 +326,39 @@ static NSString *aCell=@"myCell";
     }
     long pageNumMax = [self.arrContacts count] < kNumContactsPerLoad*(indexPath.row+1)? ([self.arrContacts count]-kNumContactsPerLoad*(indexPath.row)):20;
     //DebugLog(@"pageNumMax:%d in row:%d",pageNumMax,indexPath.row);
+
     [[cell.contentView subviews] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         if ([self.arrContacts count]>0 && idx<pageNumMax) {
             ((UIView*)obj).backgroundColor = kSquareColor;
             CContactInfo *dataItem = [arrContacts objectAtIndex:kNumContactsPerLoad*(indexPath.row)+idx];
-            ((UILabel*)[[(UIView*)obj subviews] objectAtIndex:1]).text = dataItem.contactName;
+            
+            if(isShowPortrait){
+                ((UILabel*)[[(UIView*)obj subviews] objectAtIndex:1]).text = dataItem.contactName;
+            }
+            else{
+                int fontSize = 16.0f;
+                
+                if([dataItem.contactName length]==4){
+                    fontSize = 14.0f;
+                }
+                else if([dataItem.contactName length]==5){
+                    fontSize = 12.0f;
+                }
+                else if([dataItem.contactName length]>5){
+                    fontSize = 10.0f;
+                }
+                ((UIButton*)obj).titleLabel.font = [UIFont systemFontOfSize:fontSize];
+                [((UIButton*)obj) setTitle:dataItem.contactName forState:UIControlStateNormal];
+            }
         }
         else{
             ((UIView*)obj).backgroundColor = MF_ColorFromRGB(200, 200, 200);
-            ((UILabel*)[[(UIView*)obj subviews] objectAtIndex:1]).text = @"";
+            if(isShowPortrait){
+                ((UILabel*)[[(UIView*)obj subviews] objectAtIndex:1]).text = @"";
+            }
+            else{
+                [((UIButton*)obj) setTitle:@"" forState:UIControlStateNormal];
+            }
         }
     }];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -336,9 +377,18 @@ static NSString *aCell=@"myCell";
     if (gestureRecognizer.state ==
         UIGestureRecognizerStateBegan) {
         UIButton *btn = (UIButton*)gestureRecognizer.view;
-        btn.backgroundColor = [UIColor redColor];
+       
         UITableViewCell *cell = (UITableViewCell*)[btn superviewWithClass:[UITableViewCell class]];
         NSIndexPath *indexPath = [myTableView indexPathForCell:cell];
+        
+        NSUInteger max = [arrContacts count];
+        NSUInteger selIndex = kNumContactsPerLoad*(indexPath.row)+btn.tag;
+        if(selIndex >= max){
+            return;
+        }
+        
+        btn.backgroundColor = [UIColor redColor];
+        
         CContactInfo *dataItem = [arrContacts objectAtIndex:kNumContactsPerLoad*(indexPath.row)+btn.tag];
         if([_arrSelecedContacts containsObject: dataItem.contactId]){
             btn.backgroundColor = kSquareColor;
@@ -365,6 +415,8 @@ static NSString *aCell=@"myCell";
 
 
 - (void) clickContact:(id)sender {
+    
+    
     UIButton *btn = sender;
     UITableViewCell *cell = (UITableViewCell*)[btn superviewWithClass:[UITableViewCell class]];
     NSIndexPath *indexPath = [myTableView indexPathForCell:cell];
@@ -372,6 +424,11 @@ static NSString *aCell=@"myCell";
     clickRow = indexPath.row;
     clickIndexAtRow = btn.tag;
     
+    NSUInteger max = [arrContacts count];
+    NSUInteger selIndex = kNumContactsPerLoad*(clickRow)+clickIndexAtRow;
+    if(selIndex >= max){
+        return;
+    }
     
     CGPoint point = btn.center;
     //DebugLog(@"%@",NSStringFromCGPoint(point));
@@ -425,6 +482,11 @@ static NSString *aCell=@"myCell";
 - (void) close:(id)sender {
     [self _slide:MWFSlideDirectionNone];
 }
+
+- (void) doSearch:(id) sender{
+    [self clickSearchBtn];
+}
+
 #pragma mark - MWFSlideNavigationViewControllerDelegate
 
 #define VIEWTAG_OVERLAY 1100
@@ -551,6 +613,11 @@ static NSString *aCell=@"myCell";
 #pragma mark - RNGridMenuDelegate
 
 - (void)gridMenu:(RNGridMenu *)gridMenu willDismissWithSelectedItem:(RNGridMenuItem *)item atIndex:(NSInteger)itemIndex {
+    NSUInteger max = [arrContacts count];
+    NSUInteger selIndex = kNumContactsPerLoad*(clickRow)+clickIndexAtRow;
+    if(selIndex >= max){
+        return;
+    }
     CContactInfo *dataItem = [arrContacts objectAtIndex:kNumContactsPerLoad*(clickRow)+clickIndexAtRow];
     DebugLog(@"%ld",(long)itemIndex);
     
@@ -558,18 +625,32 @@ static NSString *aCell=@"myCell";
         //打电话
         NSArray *joined = nil;
         if(itemIndex == 1){
-            joined =  JOINARR4(mt_Tel(dataItem.dTel),mt_phone_short(dataItem.dTelShort),mt_Tel(dataItem.hTel),mt_mobile(dataItem.mobile),mt_phone_short(dataItem.mobileShort));
+            joined =  JOINARR2(mt_Tel(dataItem.dTel),mt_mobile(dataItem.mobile),mt_phone_short(dataItem.mobileShort));
         }
         else{
             if([_arrSelecedContacts count]>0){
+                
                 NSMutableArray *tempMobile = [NSMutableArray array];
                 [_arrSelecedContacts each:^(id sender) {
-                    [tempMobile addObjectsFromArray:mt_mobile(((CContactInfo*)[[CContactInfo loadByContactId:sender] firstObject]).mobile)];
+                    NSArray *shortMobile = matchPhoneShort(((CContactInfo*)[[CContactInfo loadByContactId:sender] firstObject]).mobileShort);
+                    if([shortMobile count]>0){
+                        [tempMobile addObjectsFromArray:shortMobile];
+                    }
+                    else{
+                        [tempMobile addObjectsFromArray:mt_mobile(((CContactInfo*)[[CContactInfo loadByContactId:sender] firstObject]).mobile)];
+                    }
+                    
                 }];
                 joined = tempMobile;
             }
             else{
-                joined = mt_mobile(dataItem.mobile);
+                NSArray *shortMobile = matchPhoneShort(dataItem.mobileShort);
+                if([shortMobile count]>0){
+                    joined = shortMobile;
+                }
+                else{
+                    joined = mt_mobile(dataItem.mobile);
+                }
             }
         }
         
@@ -621,7 +702,7 @@ static NSString *aCell=@"myCell";
         [maskView addGestureRecognizer:tapGesture];
         [tapGesture release];
         
-        ContactDetailView *cdv = [[ContactDetailView alloc] initWithFrame:CGRectMake((maskView.width-227.f)/2.f, (maskView.height-332.f)/2.f, 227.f, 332.f) andData:dataItem];
+        ContactDetailView *cdv = [[ContactDetailView alloc] initWithFrame:CGRectMake((maskView.width-227.f)/2.f, (maskView.height-362.f)/2.f, 227.f, 362.f) andData:dataItem];
         [maskView addSubview:cdv];
         [cdv release];
         
@@ -763,6 +844,7 @@ static NSString *aCell=@"myCell";
 - (BOOL)peoplePickerNavigationController:(ABPeoplePickerNavigationController *)peoplePicker shouldContinueAfterSelectingPerson:(ABRecordRef)person property:(ABPropertyID)property identifier:(ABMultiValueIdentifier)identifier{
     return YES;
 }
+
 
 #pragma mark - ActionSideBarDelegate
 - (void) clickSearchBtn{

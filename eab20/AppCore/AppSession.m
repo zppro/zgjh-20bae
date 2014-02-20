@@ -60,6 +60,14 @@ SYNTHESIZE_LESSER_SINGLETON_FOR_CLASS(AppSession);
     return NO;
 }
 
++ (BOOL)whetherIsShowPortrait{
+    NSNumber *_isShowPortrait = AppSetting(APP_SETTING_IS_SHOW_PORTRAIT_KEY);
+    if (_isShowPortrait) {
+        return [_isShowPortrait boolValue];
+    }
+    return NO;
+}
+
 + (BOOL)whetherCanAccessAB{
     return ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusAuthorized;
 }
