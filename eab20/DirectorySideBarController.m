@@ -187,7 +187,14 @@
 #pragma mark TreeView Data Source
 - (UITableViewCell *)treeView:(RATreeView *)treeView cellForItem:(id)item treeNodeInfo:(RATreeNodeInfo *)treeNodeInfo{
     //NSInteger numberOfChildren = [treeNodeInfo.children count];
-    UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
+    UITableViewCell *cell = [treeView dequeueReusableCellWithIdentifier:@"cell"];
+    if(cell == nil){
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
+        UIImageView *splitView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 40-2.5, treeView.width, 2.5)];
+        splitView.image = MF_PngOfDefaultSkin(@"cellSplit.png");
+        [cell addSubview:splitView];
+        [splitView release];
+    }
     CDirectoryInfo * directoryInfo = ((CDirectoryInfo *)item);
     NSNumber *countOfDirectoryPath = [_countOfContactForDirectoryPath objectForKey:directoryInfo.directoryPath];
     if(countOfDirectoryPath==nil){
@@ -210,10 +217,7 @@
         cell.detailTextLabel.textColor = [UIColor blackColor];
     }
     */
-    UIImageView *splitView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 40-2.5, treeView.width, 2.5)];
-    splitView.image = MF_PngOfDefaultSkin(@"cellSplit.png");
-    [cell addSubview:splitView];
-    [splitView release];
+    
     
     return cell;
 }

@@ -9,12 +9,12 @@
 #ifndef SmartLife_AppMacro_h
 #define SmartLife_AppMacro_h
 
-#define debugSite @"http://192.168.1.7"
+#define debugSite @"http://192.168.1.2"
 
 #define baseURL  @"http://www.lifeblue.com.cn/WebService/Default.ashx"
 #define baseURL2 @"http://www.lifeblue.com.cn/WebService/Upload.ashx"
 #define baseURL3 @"www.lifeblue.com.cn/WebService/Upload/CallService" 
-#define intranetSite @"42.120.6.22:8891" //@"42.120.6.22:8891" @"34.0.191.202:8888"
+#define intranetSite @"34.0.191.202:8888" //@"42.120.6.22:8891" @"34.0.191.202:8888"
 #define appId @"MM101"
 #define invokeToAppId @"IP002"
 

@@ -388,8 +388,9 @@
 - (void)setItems:(NSArray *)_items startingAtRowIndex:(NSUInteger)startingRowIndex {
     NSUInteger numberOfGivenRows = [_items count] / TSNumberOfShownCols;
     if (numberOfGivenRows == 0) numberOfGivenRows = 1;
-    NSMutableArray *mutableItems = [[NSMutableArray alloc] initWithArray:_items];
-    
+    // for memory leak
+    //NSMutableArray *mutableItems = [[NSMutableArray alloc] initWithArray:_items];
+    NSMutableArray *mutableItems = [NSMutableArray arrayWithArray:_items];
     NSUInteger lastRowIndex = startingRowIndex;
     
     for (int i = 0; i < numberOfGivenRows; i++){

@@ -30,7 +30,7 @@
     [self.navigationController setNavigationBarHidden:YES];
     
     //判断硬件设备
-    self.view.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"Default.png"]];
+    self.view.backgroundColor = [[[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"Default.png"]] autorelease];
     
     _mobileField = [[BZGFormField alloc] initWithFrame:CGRectMake((self.view.width - 200)/2.f, 50.f, 200.f, 38.f)];
     _mobileField.textField.font = [UIFont systemFontOfSize:18];

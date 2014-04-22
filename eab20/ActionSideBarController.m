@@ -97,19 +97,24 @@ static NSString *aCell=@"myCell";
         
         [cell addSubview:imgView];
         [imgView release];
-        
+        /*
         if(indexPath.row==0){
             imgView.image = MF_PngOfDefaultSkin(@"search.png");
-            /*
-            UIButton *searchBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-            [searchBtn setFrame:CGRectMake((cell.contentView.width - 48.f)/2.f,(cell.contentView.height - 48.f)/2.f, 48.f, 48.f)];
-            [searchBtn setImage:MF_PngOfDefaultSkin(@"search.png") forState:UIControlStateNormal];
-            [searchBtn addTarget:self action:@selector(doSearch:) forControlEvents:UIControlEventTouchUpInside];
-            [searchBtn setBackgroundColor:[UIColor clearColor]];
-            [cell.contentView addSubview:searchBtn];
-            */
+            
+             UIButton *searchBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+             [searchBtn setFrame:CGRectMake((cell.contentView.width - 48.f)/2.f,(cell.contentView.height - 48.f)/2.f, 48.f, 48.f)];
+             [searchBtn setImage:MF_PngOfDefaultSkin(@"search.png") forState:UIControlStateNormal];
+             [searchBtn addTarget:self action:@selector(doSearch:) forControlEvents:UIControlEventTouchUpInside];
+             [searchBtn setBackgroundColor:[UIColor clearColor]];
+             [cell.contentView addSubview:searchBtn];
+         
         }
-        else if(indexPath.row==1){
+        else{
+            
+        
+        }
+         */
+        if(indexPath.row==0){
             imgView.image = MF_PngOfDefaultSkin(@"sync.png");
             /*
             UIButton *syncBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -120,7 +125,7 @@ static NSString *aCell=@"myCell";
             [cell.contentView addSubview:syncBtn];
             */
         }
-        else if (indexPath.row == 2){
+        else if (indexPath.row == 1){
             imgView.image = MF_PngOfDefaultSkin(@"gear.png");
             /*
             UIButton *gearBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -131,7 +136,7 @@ static NSString *aCell=@"myCell";
             [cell.contentView addSubview:gearBtn];
             */
         }
-        else if (indexPath.row == 3){
+        else if (indexPath.row == 2){
             imgView.image = MF_PngOfDefaultSkin(@"info-2.png");
             /*
             UIButton *infoBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -151,16 +156,21 @@ static NSString *aCell=@"myCell";
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     DebugLog(@"didSelect %ld",(long)indexPath.row);
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    /*
     if(indexPath.row==0){
         [self doSearch:nil];
     }
-    else if(indexPath.row==1){
+    else{
+        
+    }
+     */
+    if(indexPath.row==0){
         [self doSync:nil];
     }
-    else if (indexPath.row == 2){
+    else if (indexPath.row == 1){
         [self doSettings:nil];
     }
-    else if (indexPath.row == 3){
+    else if (indexPath.row == 2){
         [self doInfo:nil];
     }
 }
@@ -211,6 +221,7 @@ static NSString *aCell=@"myCell";
                 //dispatch_get_main_queue()
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [HttpAppAsynchronous httpGetWithUrl:[appSession getBizUrl:BIT_SyncDirectory] req:req sucessBlock:^(id result) {
+                        [CDirectoryInfo deleteAll];
                         if([CDirectoryInfo updateAll:(NSArray*)((HttpAppResponse*)result).rows]){
                             /** 读取联系人(基础) start **/
                             if(self.delegate != nil){
@@ -219,7 +230,7 @@ static NSString *aCell=@"myCell";
                             dispatch_async(dispatch_get_main_queue(), ^{
                                 
                                 [HttpAppAsynchronous httpGetWithUrl:[appSession getBizUrl:BIT_SyncContact] req:req sucessBlock:^(id result) {
-                                    
+                                    [CContactInfo deleteAll];
                                     if([CContactInfo updateWithData:(NSArray*)((HttpAppResponse*)result).rows ByType:UpdateSourceType_BySelf]){
                                         if(self.delegate != nil){
                                             [(id)_delegate performSelector:@selector(updateSync:) withObject:@"同步成功"];
