@@ -139,6 +139,14 @@ SYNTHESIZE_LESSER_SINGLETON_FOR_CLASS(AppSession);
             _bizUrl = JOIN(baseBizUrl, @"/Sync/IOS/SyncContact");
             break;
         }
+        case BIT_GetContactPageCount:{
+            _bizUrl = JOIN(baseBizUrl, @"/Sync/IOS/GetContactPageCount");
+            break;
+        }
+        case BIT_SyncContactByPage:{
+            _bizUrl = JOIN(baseBizUrl, @"/Sync/IOS/SyncContactByPage");
+            break;
+        }
         case BIT_SyncContactBySelf:{
             _bizUrl = JOIN(baseBizUrl, @"/Sync/IOS/SyncContactBySelf2");
             break;

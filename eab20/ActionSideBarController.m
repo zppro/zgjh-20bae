@@ -223,29 +223,28 @@ static NSString *aCell=@"myCell";
                     [HttpAppAsynchronous httpGetWithUrl:[appSession getBizUrl:BIT_SyncDirectory] req:req sucessBlock:^(id result) {
                         [CDirectoryInfo deleteAll];
                         if([CDirectoryInfo updateAll:(NSArray*)((HttpAppResponse*)result).rows]){
-                            /** 读取联系人(基础) start **/
+                            /** 读取联系人(基础) start
                             if(self.delegate != nil){
                                 [(id)_delegate performSelector:@selector(updateSync:) withObject:@"同步联系人..."];
-                            }
+                            }**/
                             dispatch_async(dispatch_get_main_queue(), ^{
-                                
-                                [HttpAppAsynchronous httpGetWithUrl:[appSession getBizUrl:BIT_SyncContact] req:req sucessBlock:^(id result) {
-                                    [CContactInfo deleteAll];
-                                    if([CContactInfo updateWithData:(NSArray*)((HttpAppResponse*)result).rows ByType:UpdateSourceType_BySelf]){
-                                        if(self.delegate != nil){
-                                            [(id)_delegate performSelector:@selector(updateSync:) withObject:@"同步成功"];
-                                        }
+                                /** 计算联系人页数 start **/
+                                if(self.delegate != nil){
+                                    [(id)_delegate performSelector:@selector(updateSync:) withObject:@"获取联系人页数..."];
+                                }
+                                [HttpAppAsynchronous httpGetWithUrl:[appSession getBizUrl:BIT_GetContactPageCount] req:req sucessBlock:^(id result) {
+                                    int pageCount = [((HttpAppResponse*)result).ret intValue];
+                                    if(pageCount>0){
+                                        [CContactInfo deleteAll];
+                                        [self doSyncContactByPageNo:1 of:pageCount with:req into:[[[NSMutableArray alloc] init] autorelease]];
                                     }
-                                    
                                 } failedBlock:^(NSError *error) {
                                     //
                                     DebugLog(@"%@",error);
                                 } completionBlock:^{
-                                    if(self.delegate != nil){
-                                        [(id)_delegate performSelector:@selector(endSync)];
-                                    }
+                                    
                                 }];
-                                /** 读取联系人(基础) end **/
+                                /** 计算联系人页数 end **/
                             });
                         }
                     } failedBlock:^(NSError *error) {
@@ -273,6 +272,50 @@ static NSString *aCell=@"myCell";
         });
         
     }
+}
+
+- (void) doSyncContactByPageNo: (NSUInteger) pageNo of:(NSUInteger) pageCount with:(HttpAppRequest*) req into:(NSMutableArray*) tempStore{
+    
+    if(self.delegate != nil){
+        [(id)_delegate performSelector:@selector(updateSync:) withObject:JOIN3(@"获取联系人 ", SI(pageNo),@"/", SI(pageCount))];
+    }
+    
+    [HttpAppAsynchronous httpGetWithUrl:JOIN2([appSession getBizUrl:BIT_SyncContactByPage], @"/", SI(pageNo)) req:req sucessBlock:^(id result) {
+        [tempStore addObjectsFromArray:(NSArray*)((HttpAppResponse*)result).rows];
+        
+        if(pageNo < pageCount){
+            [self doSyncContactByPageNo:pageNo+1 of:pageCount with:req into:tempStore];
+        }
+        else{
+            if(self.delegate != nil){
+                [(id)_delegate performSelector:@selector(updateSync:) withObject:@"写入到本地..."];
+            }
+            /*
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+            });
+            */
+            
+            double delayInSeconds = 1.0;
+            dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+            dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+                if([CContactInfo updateWithData:tempStore ByType:UpdateSourceType_BySelf]){
+                    DebugLog(@"pageNo: %d -> %d",pageNo, [[CContactInfo fetchAll] count]);
+                    if(self.delegate != nil){
+                        [(id)_delegate performSelector:@selector(endSync)];
+                    }
+                }
+            });
+        }
+        
+    } failedBlock:^(NSError *error) {
+        //
+        DebugLog(@"%@",error);
+    } completionBlock:^{
+        
+    }];
+    
+    
 }
 
 - (void) doSync2:(id) sender{

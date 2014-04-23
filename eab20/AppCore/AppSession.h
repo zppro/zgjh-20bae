@@ -25,6 +25,8 @@ typedef enum {
     BIT_SyncSelfInfo,
     BIT_SyncDirectory,
     BIT_SyncContact,
+    BIT_GetContactPageCount,
+    BIT_SyncContactByPage,
     BIT_SyncContactBySelf,
     BIT_SyncContactByDLine,
     BIT_SyncContactBySELine
