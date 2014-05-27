@@ -22,7 +22,7 @@
 
 - (void)endSync;
 
-- (void)cancelSync;
+- (void)cancelActionBar;
 
 @end
 

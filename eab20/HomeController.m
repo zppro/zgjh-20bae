@@ -898,7 +898,7 @@ static NSString *aCell=@"myCell";
     [self fetchDataLocalBy:nil and:nil];
 }
 
-- (void)cancelSync{
+- (void)cancelActionBar{
     [self _slide:MWFSlideDirectionNone];
 }
 

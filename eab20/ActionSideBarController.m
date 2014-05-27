@@ -194,7 +194,7 @@ static NSString *aCell=@"myCell";
             [self _doSync];
         }, ^{
             if(self.delegate != nil){
-                [(id)_delegate performSelector:@selector(cancelSync)];
+                [(id)_delegate performSelector:@selector(cancelActionBar)];
             }
         });
     }
@@ -506,6 +506,10 @@ static NSString *aCell=@"myCell";
 }
 
 - (void) doInfo:(id) sender{
+    if(self.delegate != nil){
+        [(id)_delegate performSelector:@selector(cancelActionBar)];
+    }
+    ShowInfo(JOIN(@"版本号",AppSetting(SETTING_DEPLOY_VERSION_KEY)));
     
 }
 
