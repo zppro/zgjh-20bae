@@ -17,6 +17,8 @@
 - (void)showWaitViewWithTitle:(NSString *)title andCloseDelay:(double) delayInSeconds;
 - (void)showWaitViewWithTitle:(NSString *)title andCloseDelay:(double) delayInSeconds withAnimation:(BOOL) animated;
 - (void)updateWaitViewWithTitle:(NSString *)title;
+- (void)finishWaitViewWithTitle:(NSString *)title;
+- (void)finishWaitViewWithTitle:(NSString *)title andCloseDelay:(double) delayInSeconds;
 - (void)closeWaitView;
 
 @end

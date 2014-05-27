@@ -165,7 +165,7 @@ static NSString *aCell=@"myCell";
     }
      */
     if(indexPath.row==0){
-        [self doSync:nil];
+        [self doSync:tableView];
     }
     else if (indexPath.row == 1){
         [self doSettings:nil];
@@ -189,6 +189,24 @@ static NSString *aCell=@"myCell";
 }
 
 - (void) doSync:(id) sender{
+    if(sender != nil){
+        ShowConfirm(@"请确定已联通网络", ^{
+            [self _doSync];
+        }, ^{
+            if(self.delegate != nil){
+                [(id)_delegate performSelector:@selector(cancelSync)];
+            }
+        });
+    }
+    else{
+        [self _doSync];
+    }
+}
+
+
+
+- (void) _doSync{
+    
     if(isActiviated && isAuthorized){
         
         NSDictionary *head = [NSDictionary dictionaryWithObjectsAndKeys:appSession.token,@"Token",invokeToAppId,@"ApplicationIdTo",appSession.du,@"DU",appSession.sdn,@"SDN",nil];
@@ -236,7 +254,9 @@ static NSString *aCell=@"myCell";
                                     int pageCount = [((HttpAppResponse*)result).ret intValue];
                                     if(pageCount>0){
                                         [CContactInfo deleteAll];
-                                        [self doSyncContactByPageNo:1 of:pageCount with:req into:[[[NSMutableArray alloc] init] autorelease]];
+                                        
+                                        [self doSyncContactByPageNo:1 of:pageCount with:req];
+                                        //[self doSyncContactByPageNo:1 of:pageCount with:req into:[[[NSMutableArray alloc] init] autorelease]];
                                     }
                                 } failedBlock:^(NSError *error) {
                                     //
@@ -272,6 +292,32 @@ static NSString *aCell=@"myCell";
         });
         
     }
+}
+
+- (void) doSyncContactByPageNo: (NSUInteger) pageNo of:(NSUInteger) pageCount with:(HttpAppRequest*) req{
+    if(self.delegate != nil){
+        [(id)_delegate performSelector:@selector(updateSync:) withObject:JOIN3(@"同步联系人 ", SI(pageNo),@"/", SI(pageCount))];
+    }
+
+    [HttpAppAsynchronous httpGetWithUrl:JOIN2([appSession getBizUrl:BIT_SyncContactByPage], @"/", SI(pageNo)) req:req sucessBlock:^(id result) {
+        [CContactInfo createWithData:((HttpAppResponse*)result).rows];
+        
+        if(pageNo < pageCount){
+            [self doSyncContactByPageNo:pageNo+1 of:pageCount with:req];
+        }
+        else{
+            if(self.delegate != nil){
+                [(id)_delegate performSelector:@selector(finishSync:) withObject:@"同步完成"];
+            }
+        }
+        
+    } failedBlock:^(NSError *error) {
+        //
+        DebugLog(@"%@",error);
+    } completionBlock:^{
+        
+    }];
+
 }
 
 - (void) doSyncContactByPageNo: (NSUInteger) pageNo of:(NSUInteger) pageCount with:(HttpAppRequest*) req into:(NSMutableArray*) tempStore{

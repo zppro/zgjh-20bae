@@ -18,7 +18,11 @@
 
 - (void)updateSync:(NSString*) title;
 
+- (void)finishSync:(NSString *)title;
+
 - (void)endSync;
+
+- (void)cancelSync;
 
 @end
 

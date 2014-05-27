@@ -888,9 +888,18 @@ static NSString *aCell=@"myCell";
     [self updateWaitViewWithTitle:title];
 }
 
+- (void) finishSync:(NSString *)title{
+    [self finishWaitViewWithTitle:title andCloseDelay:2.0f];
+    [self fetchDataLocalBy:nil and:nil];
+}
+
 - (void) endSync{
     [self closeWaitView];
     [self fetchDataLocalBy:nil and:nil];
+}
+
+- (void)cancelSync{
+    [self _slide:MWFSlideDirectionNone];
 }
 
 #pragma mark - DirectorySideBarDelegate

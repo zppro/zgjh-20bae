@@ -66,6 +66,22 @@
     self.waitView.labelText = title;
 }
 
+- (void)finishWaitViewWithTitle:(NSString *)title{
+    [self finishWaitViewWithTitle:title andCloseDelay:0];
+}
+
+- (void)finishWaitViewWithTitle:(NSString *)title andCloseDelay:(double) delayInSeconds{
+    self.waitView.labelText = title;
+    self.waitView.customView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"37x-Checkmark.png"]] autorelease];
+    self.waitView.mode = MBProgressHUDModeCustomView;
+    if(delayInSeconds > 0){
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+            [self closeWaitView];
+        });
+    }
+}
+
 - (void)closeWaitView {
     if (self.waitView) {
         [self.waitView hide:YES];
