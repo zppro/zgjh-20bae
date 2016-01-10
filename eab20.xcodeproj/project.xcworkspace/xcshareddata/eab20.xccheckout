@@ -10,33 +10,42 @@
 	<string>eab20</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>3BD70308-AD90-45F7-AE01-03763C09A52A</key>
-		<string>ssh://github.com/zppro/core.git</string>
-		<key>F5D6969B-6148-42B6-9197-3946FB1DFC54</key>
+		<key>433651E7FC4F8944F9C9392AF796F4D1C9A58400</key>
 		<string>https://github.com/zppro/eab20.git</string>
+		<key>8B4903345221B14E34A269702F4E8FC1B7200C1B</key>
+		<string>github.com:zppro/core.git</string>
+		<key>bd5eee18-957c-e545-9f83-1f04c30bfad5++784</key>
+		<string>http://www.svnchina.net:9999/svn/iPad/CodansShareLibrary/branches/CodansShareLibrary10/CodansShareLibrary10/Controls/ThirdParty/SVSegmentedControl/SVSegmentedControl.bundle</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>eab20.xcodeproj/project.xcworkspace</string>
+	<string>eab20.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>3BD70308-AD90-45F7-AE01-03763C09A52A</key>
-		<string>../../../core</string>
-		<key>F5D6969B-6148-42B6-9197-3946FB1DFC54</key>
+		<key>433651E7FC4F8944F9C9392AF796F4D1C9A58400</key>
 		<string>../..</string>
+		<key>8B4903345221B14E34A269702F4E8FC1B7200C1B</key>
+		<string>../../../core</string>
+		<key>bd5eee18-957c-e545-9f83-1f04c30bfad5++784</key>
+		<string>../../../core/core/OpenSource/SVSegmentedControl/SVSegmentedControl.bundle</string>
+	</dict>
+	<key>IDESourceControlProjectRepositoryRootDictionary</key>
+	<dict>
+		<key>bd5eee18-957c-e545-9f83-1f04c30bfad5++784</key>
+		<string>http://www.svnchina.net:9999/svn/iPad</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://github.com/zppro/eab20.git</string>
 	<key>IDESourceControlProjectVersion</key>
-	<integer>110</integer>
+	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>F5D6969B-6148-42B6-9197-3946FB1DFC54</string>
+	<string>433651E7FC4F8944F9C9392AF796F4D1C9A58400</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>3BD70308-AD90-45F7-AE01-03763C09A52A</string>
+			<string>8B4903345221B14E34A269702F4E8FC1B7200C1B</string>
 			<key>IDESourceControlWCCName</key>
 			<string>core</string>
 		</dict>
@@ -44,9 +53,17 @@
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>F5D6969B-6148-42B6-9197-3946FB1DFC54</string>
+			<string>433651E7FC4F8944F9C9392AF796F4D1C9A58400</string>
 			<key>IDESourceControlWCCName</key>
 			<string>eab20</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.subversion</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>bd5eee18-957c-e545-9f83-1f04c30bfad5++784</string>
+			<key>IDESourceControlWCCName</key>
+			<string>SVSegmentedControl.bundle</string>
 		</dict>
 	</array>
 </dict>
